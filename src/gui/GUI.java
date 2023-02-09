@@ -19,43 +19,23 @@ import main.Window;
 
 public class GUI {
 	
-	//Window settings
-	private int windowSizeX = 1900;
-	private int windowSizeY = 1000;
-	private final String title = "Flocking Simulator";
-	
-	
 	private JFrame frame;
 	private Canvas canvas;
 	
 	Handler handler;
 	
 	
-	public GUI(Handler handler){
+	public GUI(Canvas canvas, Handler handler, Window window){
+		this.canvas = canvas;
 		this.handler = handler;
 		
-		frame = new Window(windowSizeX, windowSizeY, title);
-		
-		canvas = new Canvas();
+		frame = window;
+
 		frame.add(canvas, BorderLayout.CENTER);
-		
 		
 		frame.add(new BotomPanel(), BorderLayout.SOUTH);
 		
 		frame.revalidate();
-	}
-
-	//Get Graphics from canvas
-	public Graphics getGraphics() {
-		BufferStrategy bs = canvas.getBufferStrategy();
-		if(bs == null) {
-			canvas.createBufferStrategy(1);
-			return null;
-		}
-		Graphics g = bs.getDrawGraphics();
-		
-		canvas.setBackground(Color.WHITE);
-		return g;
 	}
 	
 	public class BotomPanel extends JPanel{
