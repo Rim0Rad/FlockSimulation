@@ -1,13 +1,13 @@
 package gui;
 
 import java.awt.BorderLayout;
+import java.awt.Button;
 import java.awt.Canvas;
 import java.awt.Color;
-import java.awt.FlowLayout;
-import java.awt.Graphics;
+import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.image.BufferStrategy;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -30,10 +30,8 @@ public class GUI {
 		this.handler = handler;
 		
 		frame = window;
-
-		frame.add(canvas, BorderLayout.CENTER);
-		
 		frame.add(new BotomPanel(), BorderLayout.SOUTH);
+		frame.add(canvas, BorderLayout.CENTER);
 		
 		frame.revalidate();
 	}
@@ -46,14 +44,14 @@ public class GUI {
 		private static final long serialVersionUID = 1L;
 
 		public BotomPanel(){
-			setLayout(new FlowLayout());
+			
+			this.setPreferredSize(new Dimension(0, 35));
 			this.setBackground(new Color(100, 120, 180));
 			
             JButton btn = new JButton("Add Boid");
             btn.setBackground(new Color(100, 120, 250));
             btn.setForeground(new Color(250,250,250));
             btn.setFocusPainted(false);
-            
             btn.addActionListener(new ActionListener(){
     			@Override
     			public void actionPerformed(ActionEvent e) {

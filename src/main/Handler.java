@@ -19,7 +19,9 @@ public class Handler {
 	public void tick() {
 		synchronized(boids){
 			for(Boid boid : boids) {
-				boid.tick();
+				
+				boid.tick(boid.flock(boids));
+				
 			}
 		}
 		

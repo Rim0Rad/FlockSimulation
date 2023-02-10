@@ -9,6 +9,8 @@ public class Tools {
 		return Math.sqrt(Math.pow(deltaX, 2) + Math.pow(deltaY, 2));
 	}
 
+	
+	/* Wraps given angle within -180 - 180 degree range */
 	public static double wrapAngle(double angle) {
 		while(angle > 180 || angle <-180) {
 			if(angle > 180) {
@@ -19,5 +21,13 @@ public class Tools {
 			}
 		}
 		return angle;
+	}
+	
+	// Returns true if points are within radius distance of each other 
+	public static boolean withinRange(Coordinates2D pos1, Coordinates2D pos2, int radius ) {
+		if(distance(pos1, pos2) <= radius) {
+			return true;
+		}
+		return false;
 	}
 }

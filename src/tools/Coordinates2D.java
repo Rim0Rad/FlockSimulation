@@ -32,4 +32,17 @@ public class Coordinates2D {
 		this.x += x;
 		this.y += y;
 	}
+
+	public void subtract(Coordinates2D pos) {
+		this.x -= pos.getX();
+		this.y -= pos.getY();
+	}
+
+	public void divide(int div) {
+		this.x /= div;
+		this.y /= div;
+		
+	}
+	
+	
 }
