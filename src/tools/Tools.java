@@ -12,7 +12,7 @@ public class Tools {
 	
 	/* Wraps given angle within -180 - 180 degree range */
 	public static double wrapAngle(double angle) {
-		while(angle > 180 || angle <-180) {
+		while(angle > 180 || angle < -180) {
 			if(angle > 180) {
 				angle = angle - 360 ;
 			}
@@ -30,4 +30,32 @@ public class Tools {
 		}
 		return false;
 	}
+	
+	
+	public static double angleBetweenDirections(double curr, double target) {
+		double angle = 0.0;
+		
+		if(curr > 90 && target < -90) {
+			//angle = -((180 - curr) + (180 + target));
+			angle = curr - target + 360;
+		}else if(curr < -90 && target > 90) {
+			angle = (180 + curr) + (180 - target);
+			
+		}else {
+			angle = curr - target;
+		}
+		
+		return angle;
+	}
+	
+	public static double angle(Coordinates2D point1, Coordinates2D point2) {
+		double xComp = point2.getX() - point1.getX();
+		double yComp = point2.getY() - point1.getY();
+		double angle = Math.atan2(yComp, xComp);
+		angle = Math.toDegrees(angle);
+		return angle;
+	}
+
+
+	
 }

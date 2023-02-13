@@ -6,38 +6,60 @@ import java.util.Collections;
 import java.util.List;
 
 import boid.Boid;
+import boid.BoidA;
+import boid.BoidB;
 
 public class Handler {
 	
-	private List<Boid> boids;
+	private List<BoidB> boids;
 	
+	/* Handles simulation objects */
 	public Handler() {
-		boids =  Collections.synchronizedList(new ArrayList<Boid>());
+		boids =  Collections.synchronizedList(new ArrayList<BoidB>());
+		
+		/* Flock TEST */
+		BoidB boid = new BoidB(100, 100, 0);
+		boids.add(boid);
+		boid = new BoidB(125, 125, 90);
+		boids.add(boid);
 		
 	}
 
 	public void tick() {
 		synchronized(boids){
-			for(Boid boid : boids) {
-				
+			for(BoidB boid : boids) {
 				boid.tick(boid.flock(boids));
-				
 			}
 		}
-		
 	}
 
 	public void render(Graphics g) {
 		synchronized(boids){
-			for(Boid boid : boids) {
+			for(BoidB boid : boids) {
 				boid.render(g);
 			}
-		}
-		
+		}	
 	}
 
-	public List<Boid> getBoids() {
+	public List<BoidB> getBoids() {
 		return boids;
+	}
+
+	public void updateAlignment(double value) {
+		for(BoidB boid: boids) {
+			boid.setAlignmentStr(value);
+		}
+	}
+
+	public void updateCohesion(double value) {
+		for(BoidB boid: boids) {
+			boid.setCohesionStr(value);
+		}
+	}
+	public void updateSeparation(double value) {
+		for(BoidB boid: boids) {
+			boid.setSeparationStr(value);
+		}
 	}
 
 }

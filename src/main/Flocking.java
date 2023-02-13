@@ -1,10 +1,13 @@
 package main;
 
 
+import java.awt.BasicStroke;
 import java.awt.BorderLayout;
 import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Stroke;
 import java.awt.image.BufferStrategy;
 
 import gui.GUI;
@@ -15,7 +18,7 @@ public class Flocking {
 	
 	//Window settings
 	private static int WINDOW_WIDTH = 1500;
-	private static int WINDOW_HEIGTH = 530;
+	private static int WINDOW_HEIGTH = 830;
 	
 	private static int CONTENT_PANE_WIDTH;
 	private static int CONTENT_PANE_HEIGHT;
@@ -40,7 +43,6 @@ public class Flocking {
 		
 		CONTENT_PANE_WIDTH = window.getContentPane().getWidth();
 		CONTENT_PANE_HEIGHT = window.getContentPane().getHeight();
-		
 		CANVAS_HEIGTH = CONTENT_PANE_HEIGHT-35;
 		CANVAS_WIDTH = CONTENT_PANE_WIDTH;
 		
@@ -55,8 +57,10 @@ public class Flocking {
 	
 	public void simulation() {
 		while(running) {
+			
 			tick();
 			render();
+			
 			try {
 				Thread.sleep(timeDelay);
 			} catch (InterruptedException e) {
@@ -71,7 +75,7 @@ public class Flocking {
 			canvas.createBufferStrategy(2);
 			return;
 		}
-		Graphics g = bs.getDrawGraphics();
+		Graphics2D g = (Graphics2D) bs.getDrawGraphics();
 		if(g == null) {
 			return;
 		}
@@ -86,9 +90,9 @@ public class Flocking {
 		g.setColor(Color.yellow);
 		g.drawLine(0, 50, 2000, 50);
 		g.drawLine(50, 0, 50, CANVAS_HEIGTH);
-		//System.out.println(CANVAS_HEIGTH);
 		g.drawLine(0, CANVAS_HEIGTH-50, 2000, CANVAS_HEIGTH - 50);
 		g.drawLine(CONTENT_PANE_WIDTH - 50, 0, CONTENT_PANE_WIDTH - 50, CANVAS_HEIGTH);
+		
 		
 		g.setColor(Color.black);
 		handler.render(g);
@@ -108,25 +112,11 @@ public class Flocking {
 	public static void main(String[] args) {
 		new Flocking();
 	}
+	public static void stop() {running = false;}
 	
 	//Getters and Setters
-	public static int getWindowWidth() {
-		return WINDOW_WIDTH;
-	}
-	
-	public static int getWindowHeigth() {
-		return WINDOW_HEIGTH;
-	}
-	public static void stop() {
-		running = false;
-	}
-
-	public static int getCanvasHeight() {
-		// TODO Auto-generated method stub
-		return CANVAS_HEIGTH;
-	}
-	public static int getCanvasWidth() {
-		// TODO Auto-generated method stub
-		return CANVAS_WIDTH;
-	}
+	public static int getWindowWidth() {return WINDOW_WIDTH;}
+	public static int getWindowHeigth() {return WINDOW_HEIGTH;}
+	public static int getCanvasHeight() {return CANVAS_HEIGTH;}
+	public static int getCanvasWidth() {return CANVAS_WIDTH;}
 }
