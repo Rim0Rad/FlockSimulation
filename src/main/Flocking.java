@@ -11,6 +11,7 @@ import java.awt.Stroke;
 import java.awt.image.BufferStrategy;
 
 import gui.GUI;
+import tools.Tools;
 
 public class Flocking {
 	
@@ -80,25 +81,40 @@ public class Flocking {
 			return;
 		}
 		
-		if(!test) {
-			g.setColor(Color.white);
-			g.fillRect(0, 0, 1920, 1020);
-		}
+		
+		//Background color
+		g.setColor(new Color(0, 0, 0, .1f));
+		g.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGTH);
 		
 		
 		//Draw wall detection zone lines
+		int offest = 150;
+		g.setStroke(new BasicStroke());
 		g.setColor(Color.yellow);
-		g.drawLine(0, 50, 2000, 50);
+		g.drawLine(0, offest, CANVAS_WIDTH, offest);
+		g.drawLine(offest, 0, offest, CANVAS_HEIGTH);
+		g.drawLine(0, CANVAS_HEIGTH-offest, CANVAS_WIDTH, CANVAS_HEIGTH - offest);
+		g.drawLine(CANVAS_WIDTH - offest, 0, CANVAS_WIDTH - offest, CANVAS_HEIGTH);
+
+		
+		
+		
+		g.setStroke(new BasicStroke());
+		g.setColor(Color.blue);
+		handler.render(g);
+		
+		
+		//Draw wall detection zone lines
+		g.setStroke(new BasicStroke(3));
+		g.setColor(Color.yellow);
+		g.drawLine(0, 50, CANVAS_WIDTH, 50);
 		g.drawLine(50, 0, 50, CANVAS_HEIGTH);
 		g.drawLine(0, CANVAS_HEIGTH-50, 2000, CANVAS_HEIGTH - 50);
-		g.drawLine(CONTENT_PANE_WIDTH - 50, 0, CONTENT_PANE_WIDTH - 50, CANVAS_HEIGTH);
+		g.drawLine(CANVAS_WIDTH - 50, 0, CANVAS_WIDTH - 50, CANVAS_HEIGTH);
 		
 		
-		g.setColor(Color.black);
-		handler.render(g);
-		g.drawLine(0, 200, 1500, 200);
 		
-		
+
 		
 		g.dispose();
 		bs.show();

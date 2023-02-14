@@ -2,9 +2,7 @@ package boid;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
-import main.Flocking;
 import tools.Coordinates2D;
 import tools.Tools;
 
@@ -21,7 +19,7 @@ public class BoidB extends Boid{
 	public BoidB(int x, int y, double direction) {
 		super(x, y, direction);
 	}
-
+	/* Create a boid at random position and direction */
 	public BoidB() {
 		super();
 	}
@@ -29,12 +27,12 @@ public class BoidB extends Boid{
 	public void tick(double flockAngle) {
 		
 		if(flockAngle == 0.0 ) {
-			//rotate(wonder());
+			rotate(wonder());
 		}else {
-			//double tempAngle = flockAngle + wonder() * 0.5;
-			//rotate(tempAngle);
+			double tempAngle = flockAngle + wonder() * 0.5;
+			rotate(tempAngle);
 		}
-		//move();
+		move();
 		
 	}
 	
@@ -70,7 +68,6 @@ public class BoidB extends Boid{
 				count++;
 			}
 			
-			System.out.println("DIRECTION:: " + direction + "  ali: " + alignAngle + " sep: " + sepAngle + " coh: " + cohesAngle);
 			return (alignAngle + sepAngle + cohesAngle)/ count;
 			
 		}else{
@@ -103,57 +100,38 @@ public class BoidB extends Boid{
 		
 		if(!inRangeBoids.isEmpty()) {
 			alignmentAngle /= inRangeBoids.size();
-			Tools.angleBetweenDirections(direction, alignmentAngle);
 		}
-		
-		
 		return  Tools.wrapAngle(alignmentAngle - this.direction);
 	}
-	
 	
 	/* Return the angle between boids direction and the opposite of the center of mass of local flock*/
 	private double calculateSeparationAngle(ArrayList<Boid> boids) {
 		
 		Coordinates2D avgPos = new Coordinates2D(0, 0); 
 		double sepAngle = 0.0;
-		int detectedBoidCount = 0;
+		int count = 0;
 		
 		//Detect boids	
 		for(Boid boid: boids) {
 			if(Tools.withinRange(pos, boid.getPos(), separationRadius)) {
 				
-				detectedBoidCount++;
+				count++;
 				avgPos.add(boid.getPos());
 			}
 		}
 		
 		//Calculate the angle
-		if(detectedBoidCount != 0) {
-			avgPos.divide(detectedBoidCount);
-			
-			//Calculate separation angle
-			// 1. get diff between x and y of center of mass and this boid
+		if(count != 0) {
+			avgPos.divide(count);
 			avgPos.subtract(this.pos);
-			// 2. atan  y/x to get the angle
-			//double angle = 0;
-			
 			sepAngle = Math.toDegrees(Math.atan2(avgPos.getY(), avgPos.getX()));
-			// 3. get correct direction
-			//if(avgPos.getY() < 0 && sepAngle > 0) {
-			//	sepAngle = -180 - sepAngle;
-			//}else if(avgPos.getY() > 0 && sepAngle < 0){
-			//	sepAngle = 180 + sepAngle;
-			//}
-			//4. invert to opposite angle
-			//sepAngle = Tools.wrapAngle(sepAngle + 180);
+			sepAngle = Tools.wrapAngle(this.direction - sepAngle);
 		}
-		System.out.println("SepDirection 	" + sepAngle + " dir:	 " + direction + " diferecnce: " + Tools.angleBetweenDirections(direction, sepAngle));
-		return Tools.angleBetweenDirections(direction, sepAngle);
+		return sepAngle;
 	}
 
-	
 	private double calculateCohesionAngle(ArrayList<Boid> boids) {
-		double cohesionAngle = 0.0;
+		double cohesAngle = 0.0;
 		Coordinates2D avgPos = new Coordinates2D(0, 0); 
 		int count = 0;
 		
@@ -163,10 +141,13 @@ public class BoidB extends Boid{
 				count++;
 			}
 		}
-		avgPos.divide(count);
-		cohesionAngle = Tools.angle(this.getPos(), avgPos);
-		
-		return Tools.angleBetweenDirections(direction, cohesionAngle);
+		if(count!= 0) {
+			avgPos.divide(count);
+			avgPos.subtract(this.pos);
+			cohesAngle = Math.toDegrees(Math.atan2(avgPos.getY(), avgPos.getX()));
+			cohesAngle = Tools.wrapAngle(cohesAngle - this.direction);
+		}
+		return cohesAngle;
 	}
 	
 	public void setAlignmentStr(double value) {this.alignmentStr = value;}

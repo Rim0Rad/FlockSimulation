@@ -35,7 +35,7 @@ public class Boid {
 	private int WONDER_TIMER_MIN = 20;
 	
 	//Wall detection radius
-	protected int detectRadius = 50;
+	protected int detectRadius = 100;
 	
 	public Boid(int x, int y, double direction) {
 		this.pos = new Coordinates2D(x, y);
@@ -53,7 +53,7 @@ public class Boid {
 		this.body = new Triangle(boidLenght, boidWidth, direction);
 		
 		this.direction =  Math.random() * (180 + 180) - 180;
-		this.color = Color.black;
+		this.color = Color.green;
 		
 		this.wonderAngVel = 0;
 		this.speed = 1;

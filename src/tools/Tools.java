@@ -35,16 +35,9 @@ public class Tools {
 	public static double angleBetweenDirections(double curr, double target) {
 		double angle = 0.0;
 		
-		if(curr > 90 && target < -90) {
-			//angle = -((180 - curr) + (180 + target));
-			angle = curr - target + 360;
-		}else if(curr < -90 && target > 90) {
-			angle = (180 + curr) + (180 - target);
-			
-		}else {
-			angle = curr - target;
-		}
-		
+		System.out.println("cur " + curr + " target " + target);
+		angle = Tools.wrapAngle(target- curr);
+		System.out.println(" diff " + angle);
 		return angle;
 	}
 	

@@ -18,11 +18,11 @@ public class Handler {
 		boids =  Collections.synchronizedList(new ArrayList<BoidB>());
 		
 		/* Flock TEST */
-		BoidB boid = new BoidB(100, 100, 0);
+		/*BoidB boid = new BoidB(100, 100, 135);
 		boids.add(boid);
-		boid = new BoidB(125, 125, 90);
+		boid = new BoidB(125, 125, -80);
 		boids.add(boid);
-		
+		*/
 	}
 
 	public void tick() {
