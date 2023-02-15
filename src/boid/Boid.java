@@ -2,8 +2,6 @@ package boid;
 
 import java.awt.Color;
 import java.awt.Graphics;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
 
 import main.Flocking;
@@ -14,7 +12,8 @@ import tools.Triangle;
 public class Boid {
 	
 	//Visual
-	private Color color;
+	protected Color color;
+	
 	private int boidLenght = 8;
 	private int boidWidth = 3;
 	private Triangle body;
@@ -26,8 +25,8 @@ public class Boid {
 	private int speed;
 	protected double direction;
 	private double wonderAngVel;
-	private double ANGULAR_VEL_MAX = 3;
-	private	double ANGULAR_VEL_MIN = -3;
+	//private double ANGULAR_VEL_MAX = 3;
+	//private	double ANGULAR_VEL_MIN = -3;
 	
 	//Boid AI
 	private int wonderTimer = 0;

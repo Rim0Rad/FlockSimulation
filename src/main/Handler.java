@@ -1,65 +1,97 @@
 package main;
 
+import java.awt.Color;
 import java.awt.Graphics;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import boid.Boid;
-import boid.BoidA;
 import boid.BoidB;
 
 public class Handler {
 	
+	
+	private List<List<BoidB>> flocks;
 	private List<BoidB> boids;
+	private int selectedFlock;
 	
 	/* Handles simulation objects */
 	public Handler() {
-		boids =  Collections.synchronizedList(new ArrayList<BoidB>());
 		
-		/* Flock TEST */
-		/*BoidB boid = new BoidB(100, 100, 135);
-		boids.add(boid);
-		boid = new BoidB(125, 125, -80);
-		boids.add(boid);
-		*/
+		flocks = Collections.synchronizedList(new ArrayList<List<BoidB>>());
+		boids =  Collections.synchronizedList(new ArrayList<BoidB>());
+		flocks.add(boids);
+		
+		selectedFlock = 0;
 	}
 
 	public void tick() {
-		synchronized(boids){
-			for(BoidB boid : boids) {
-				boid.tick(boid.flock(boids));
+		synchronized(flocks){
+			for(List<BoidB> boids: flocks) {
+				System.out.println("tick flock");
+				synchronized(boids){
+					System.out.println("pre boid tick");
+					for(BoidB boid : boids) {
+						System.out.println("tick boid");
+						boid.tick(boid.flock(boids));
+					}
+				}
 			}
 		}
 	}
 
-	public void render(Graphics g) {
-		synchronized(boids){
-			for(BoidB boid : boids) {
-				boid.render(g);
+	public synchronized void render(Graphics g) {
+		synchronized(flocks){
+			for(List<BoidB> boids: flocks) {
+				System.out.println("render flock" + flocks.indexOf(boids));
+				synchronized(boids) {
+					System.out.println("preboid render");
+					for(BoidB boid : boids) {
+						System.out.println("render a boid");
+						boid.render(g);
+					}
+				}
 			}
 		}	
 	}
 
 	public List<BoidB> getBoids() {
-		return boids;
+		return flocks.get(selectedFlock);
 	}
 
 	public void updateAlignment(double value) {
-		for(BoidB boid: boids) {
+		for(BoidB boid: flocks.get(selectedFlock)) {
 			boid.setAlignmentStr(value);
 		}
 	}
 
 	public void updateCohesion(double value) {
-		for(BoidB boid: boids) {
+		for(BoidB boid: flocks.get(selectedFlock)) {
 			boid.setCohesionStr(value);
 		}
 	}
 	public void updateSeparation(double value) {
-		for(BoidB boid: boids) {
+		for(BoidB boid: flocks.get(selectedFlock)) {
 			boid.setSeparationStr(value);
 		}
+	}
+
+	public void updateColor(Color value) {
+		for(BoidB boid: flocks.get(selectedFlock)) {
+			boid.setColor(value);
+		}
+		
+	}
+
+	public List<List<BoidB>> getFlocks() {
+		return flocks;
+	}
+
+	public void flockSelected(int selectedIndex) {
+		this.selectedFlock = selectedIndex;
+	}
+	public int getFlockSelected() {
+		return selectedFlock;
 	}
 
 }

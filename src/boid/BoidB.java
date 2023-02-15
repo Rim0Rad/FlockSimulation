@@ -1,5 +1,6 @@
 package boid;
 
+import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -153,4 +154,8 @@ public class BoidB extends Boid{
 	public void setAlignmentStr(double value) {this.alignmentStr = value;}
 	public void setCohesionStr(double value) {this.cohesionStr = value;	}
 	public void setSeparationStr(double value) {this.separationStr = value;}
+	public void setColor(Color value) {
+		this.color = value;
+		
+	}
 }

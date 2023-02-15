@@ -2,37 +2,32 @@ package main;
 
 
 import java.awt.BasicStroke;
-import java.awt.BorderLayout;
 import java.awt.Canvas;
 import java.awt.Color;
-import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Stroke;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.image.BufferStrategy;
 
 import gui.GUI;
-import tools.Tools;
 
 public class Flocking {
 	
 	public static boolean test = false;
 	
 	//Window settings
+	private final String title = "Flocking Simulator";
 	private static int WINDOW_WIDTH = 1500;
 	private static int WINDOW_HEIGTH = 830;
 	
-	private static int CONTENT_PANE_WIDTH;
-	private static int CONTENT_PANE_HEIGHT;
+	//private static int CANVAS_HEIGTH;
+	//private static int CANVAS_WIDTH;
 	
-	private static int CANVAS_HEIGTH;
-	private static int CANVAS_WIDTH;
 	
-	private final String title = "Flocking Simulator";
-	
-	Window window;
-	GUI gui;
-	Canvas canvas;
-	Handler handler;
+	public static Window window;
+	private static GUI gui;
+	private Canvas canvas;
+	private Handler handler;
 	
 	//Simulation
 	private static boolean running = true;
@@ -42,13 +37,7 @@ public class Flocking {
 		
 		window = new Window(WINDOW_WIDTH, WINDOW_HEIGTH, title);
 		
-		CONTENT_PANE_WIDTH = window.getContentPane().getWidth();
-		CONTENT_PANE_HEIGHT = window.getContentPane().getHeight();
-		CANVAS_HEIGTH = CONTENT_PANE_HEIGHT-35;
-		CANVAS_WIDTH = CONTENT_PANE_WIDTH;
-		
 		canvas = new Canvas();
-		canvas.setSize(WINDOW_WIDTH, CANVAS_HEIGTH);
 		
 		handler = new Handler();
 		gui = new GUI(canvas, handler, window);
@@ -71,6 +60,7 @@ public class Flocking {
 	}
 	
 	private void render() {
+		System.out.println("Render");
 		BufferStrategy bs = canvas.getBufferStrategy();
 		if(bs == null) {
 			canvas.createBufferStrategy(2);
@@ -84,55 +74,53 @@ public class Flocking {
 		
 		//Background color
 		g.setColor(new Color(0, 0, 0, .1f));
-		g.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGTH);
+		g.fillRect(0, 0, getCanvasWidth(), getCanvasHeight());
 		
 		
 		//Draw wall detection zone lines
-		int offest = 150;
+	/*	int offest = 150;
 		g.setStroke(new BasicStroke());
 		g.setColor(Color.yellow);
-		g.drawLine(0, offest, CANVAS_WIDTH, offest);
-		g.drawLine(offest, 0, offest, CANVAS_HEIGTH);
-		g.drawLine(0, CANVAS_HEIGTH-offest, CANVAS_WIDTH, CANVAS_HEIGTH - offest);
-		g.drawLine(CANVAS_WIDTH - offest, 0, CANVAS_WIDTH - offest, CANVAS_HEIGTH);
-
-		
-		
-		
+		g.drawLine(0, offest, getCanvasWidth(), offest);
+		g.drawLine(offest, 0, offest, getCanvasHeight());
+		g.drawLine(0, getCanvasHeight()-offest, getCanvasWidth(), getCanvasHeight() - offest);
+		g.drawLine(getCanvasWidth() - offest, 0, getCanvasWidth() - offest, getCanvasHeight());
+*/
 		g.setStroke(new BasicStroke());
-		g.setColor(Color.blue);
 		handler.render(g);
 		
-		
 		//Draw wall detection zone lines
-		g.setStroke(new BasicStroke(3));
+/*		g.setStroke(new BasicStroke(3));
 		g.setColor(Color.yellow);
-		g.drawLine(0, 50, CANVAS_WIDTH, 50);
-		g.drawLine(50, 0, 50, CANVAS_HEIGTH);
-		g.drawLine(0, CANVAS_HEIGTH-50, 2000, CANVAS_HEIGTH - 50);
-		g.drawLine(CANVAS_WIDTH - 50, 0, CANVAS_WIDTH - 50, CANVAS_HEIGTH);
-		
-		
-		
-
+		g.drawLine(0, 50, getCanvasWidth(), 50);
+		g.drawLine(50, 0, 50, getCanvasHeight());
+		g.drawLine(0, getCanvasHeight()-50, 2000, getCanvasHeight() - 50);
+		g.drawLine(getCanvasWidth() - 50, 0, getCanvasWidth() - 50, getCanvasHeight());
+*/		
 		
 		g.dispose();
 		bs.show();
-		
 	}
 
 	private void tick() {
+		System.out.println("tick");
 		handler.tick();
 	}
 
 	public static void main(String[] args) {
 		new Flocking();
 	}
+	
 	public static void stop() {running = false;}
 	
+	
 	//Getters and Setters
-	public static int getWindowWidth() {return WINDOW_WIDTH;}
-	public static int getWindowHeigth() {return WINDOW_HEIGTH;}
-	public static int getCanvasHeight() {return CANVAS_HEIGTH;}
-	public static int getCanvasWidth() {return CANVAS_WIDTH;}
+		public static int getWindowWidth() {return WINDOW_WIDTH;}
+		public static int getWindowHeigth() {return WINDOW_HEIGTH;}
+		public static int getCanvasHeight() {
+			return gui.getCanvasHeigth();
+		}
+		public static int getCanvasWidth() {
+			return gui.getCanvasWidth();
+		}
 }
