@@ -6,13 +6,14 @@ import java.util.Random;
 
 import main.Flocking;
 import tools.Coordinates2D;
+import tools.HSBColor;
 import tools.Tools;
 import tools.Triangle;
 
 public class Boid {
 	
 	//Visual
-	protected Color color;
+	protected HSBColor color;
 	
 	private int boidLenght = 8;
 	private int boidWidth = 3;
@@ -40,7 +41,8 @@ public class Boid {
 		this.pos = new Coordinates2D(x, y);
 		this.direction = direction;
 		this.body = new Triangle(boidLenght, boidWidth, direction);
-		this.color = Color.black;
+		
+		this.color = new HSBColor(0, 0 ,0);
 		this.rotate(0);
 	}
 	
@@ -52,7 +54,7 @@ public class Boid {
 		this.body = new Triangle(boidLenght, boidWidth, direction);
 		
 		this.direction =  Math.random() * (180 + 180) - 180;
-		this.color = Color.green;
+		this.color =  new HSBColor(0.2f, 1 ,1);
 		
 		this.wonderAngVel = 0;
 		this.speed = 1;
@@ -79,13 +81,13 @@ public class Boid {
 	
 	public void render(Graphics g) {
 
-		g.setColor(color);
+		g.setColor(color.getColor());
 		g.drawPolygon(body.relativeToX(pos.getX()), body.relativeToY(pos.getY()), 3);
 		g.fillOval( (int)pos.getX(), (int) pos.getY(), 2, 2);
 	
 	}
 	
-	/* Update x and y positions based boids direction */
+	/*Update x and y positions based boids direction */
 	protected void move() {
 		double rad = Math.toRadians(direction);
 		
@@ -94,13 +96,13 @@ public class Boid {
 		pos.wrap(Flocking.getCanvasWidth(), Flocking.getCanvasHeight());
 	}
 	
-	/* Changes the direction of the boid and rotates the body */
+	/*Changes the direction of the boid and rotates the body */
 	protected void rotate(double angVel) {
 		direction = Tools.wrapAngle(direction += angVel);
 		body.Rotate(direction);
 	}
 	
-	/* Simulates a random direction change of the boid */ 
+	/*Simulates a random direction change of the boid */ 
 	protected double wonder(){
 		if(wonderTimer-- <=  0) {
 			wonderTimer = (int) ((Math.random() * (WONDER_TIMER_MAX - WONDER_TIMER_MIN)) + WONDER_TIMER_MIN);
@@ -112,7 +114,7 @@ public class Boid {
 	}
 	
 	
-	/* Avoid the edges of the canvas */
+	/*Avoid the edges of the canvas */
 	protected double avoidWalls(){
 		double angVel = 0.0;
 	

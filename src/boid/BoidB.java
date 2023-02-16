@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import tools.Coordinates2D;
+import tools.HSBColor;
 import tools.Tools;
 
 public class BoidB extends Boid{
@@ -64,19 +65,15 @@ public class BoidB extends Boid{
 			cohesAngle = calculateCohesionAngle(boidsDetected);
 			if(cohesAngle != 0) {
 				cohesAngle = Tools.wrapAngle(cohesAngle);
-				cohesAngle = cohesAngle * cohesionStr;
-				
+				cohesAngle = cohesAngle * cohesionStr;		
 				count++;
-			}
-			
+			}	
 			return (alignAngle + sepAngle + cohesAngle)/ count;
 			
 		}else{
 			return 0;
 		}
-		
 	}
-	
 	
 	/* Find all of the boids within detection radius */
 	private ArrayList<Boid> detect(List<BoidB> boids) {
@@ -104,7 +101,7 @@ public class BoidB extends Boid{
 		}
 		return  Tools.wrapAngle(alignmentAngle - this.direction);
 	}
-	
+
 	/* Return the angle between boids direction and the opposite of the center of mass of local flock*/
 	private double calculateSeparationAngle(ArrayList<Boid> boids) {
 		
@@ -151,11 +148,23 @@ public class BoidB extends Boid{
 		return cohesAngle;
 	}
 	
+	
+	public void setColor(HSBColor hsbColor) {this.color = hsbColor;}
+	public void setColor(int value) {
+		this.color.setHue(value);	
+	}
+	public int getColor() {return this.color.getHue();}
+	
+	public void updateParameters(double value, double value2, double value3) {
+		setAlignmentStr(value*0.01);
+		setCohesionStr(value2*0.01);
+		setSeparationStr(value3*0.01);
+	}
 	public void setAlignmentStr(double value) {this.alignmentStr = value;}
 	public void setCohesionStr(double value) {this.cohesionStr = value;	}
 	public void setSeparationStr(double value) {this.separationStr = value;}
-	public void setColor(Color value) {
-		this.color = value;
-		
-	}
+	public int getAlignment() {return (int) (this.alignmentStr * 100);}
+	public int getCohesion() {return (int) (this.cohesionStr * 100);}
+	public int getSeparation() {return (int) (this.separationStr * 100);}
+	
 }

@@ -11,6 +11,7 @@ import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.ArrayList;
+import java.util.Collections;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -24,6 +25,7 @@ import javax.swing.event.ChangeListener;
 import boid.BoidB;
 import main.Handler;
 import main.Window;
+import tools.HSBColor;
 
 public class GUI {
 	
@@ -44,6 +46,7 @@ public class GUI {
 	private JSlider alignmentSlider;
 	private JSlider cohesionSlider;
 	private JSlider separationSlider;
+	private JSlider colorSlider;
 	
 	private JButton fullScreenBT;
 	private BotomPanel botPanel;
@@ -122,13 +125,15 @@ public class GUI {
             addBoidBT.addActionListener(new ActionListener(){
     			@Override
     			public void actionPerformed(ActionEvent e) {
-    				synchronized(handler.getBoids()){
     					for(int i = 0; i < 10; i++) {
     						
-    						handler.getBoids().add(new BoidB());
+    						BoidB boid = new BoidB();
+    						System.out.println(colorSlider.getValue());
+    						boid.setColor(colorSlider.getValue());
+    						boid.updateParameters(alignmentSlider.getValue(), cohesionSlider.getValue(),separationSlider.getValue());
+    						
+    						handler.addBoid(boid);
     					}
-    				}
-    				System.out.println("Boid added");
     			}
             });
             add(addBoidBT);
@@ -141,12 +146,14 @@ public class GUI {
     			@Override
     			public void actionPerformed(ActionEvent e) {
     				synchronized(handler.getFlocks()){
-    					handler.getFlocks().add(new ArrayList<BoidB>());
+    					
+    					handler.getFlocks().add(Collections.synchronizedList(new ArrayList<BoidB>()));
     					flockSelectCB.addItem("Flock " + handler.getFlocks().size());
     					flockSelectCB.setSelectedItem("Flock " + handler.getFlocks().size());
     				}
-    				System.out.println("Flock added");
     			}
+
+				
             });
             add(addFlockBT); 
             
@@ -157,7 +164,13 @@ public class GUI {
 
 				@Override
 				public void itemStateChanged(ItemEvent e) {
-					handler.flockSelected(flockSelectCB.getSelectedIndex());
+					handler.setFlockSelected(flockSelectCB.getSelectedIndex());
+					resetFlockSlider();
+				}
+				private void resetFlockSlider() {
+					alignmentSlider.setValue(handler.getAlignment());
+					cohesionSlider.setValue(handler.getCohesion());
+					separationSlider.setValue(handler.getSeparation());
 				}
             });
             add(flockSelectCB);
@@ -171,7 +184,7 @@ public class GUI {
             alignmentSlider.addChangeListener(new ChangeListener() {
 				@Override
 				public void stateChanged(ChangeEvent e) {
-					handler.updateAlignment(alignmentSlider.getValue() * 0.01);
+					handler.updateAlignment(alignmentSlider.getValue());
 				}
             });
             add(alignmentSlider);
@@ -183,7 +196,7 @@ public class GUI {
             cohesionSlider.addChangeListener(new ChangeListener() {
 				@Override
 				public void stateChanged(ChangeEvent e) {
-					handler.updateCohesion(cohesionSlider.getValue() * 0.01);
+					handler.updateCohesion(cohesionSlider.getValue());
 				}
             });
             add(cohesionSlider);
@@ -195,19 +208,20 @@ public class GUI {
             separationSlider.addChangeListener(new ChangeListener() {
 				@Override
 				public void stateChanged(ChangeEvent e) {
-					handler.updateSeparation(separationSlider.getValue() * 0.01);
+					handler.updateSeparation(separationSlider.getValue());
 				}
             });
             add(separationSlider);
             
             TitledBorder colorBorder = new TitledBorder("Color");
-            JSlider colorSlider = jSliderSetup(0, 0 , 100, 0, 1, 0, colorBorder, new Color(100, 120, 250));
+            colorSlider = jSliderSetup(0, 0 , 100, 40, 1, 0, colorBorder, new Color(100, 120, 250));
             colorSlider .setPaintLabels(false);
             colorSlider.setPaintTicks(false);
             colorSlider.addChangeListener(new ChangeListener() {
 				@Override
 				public void stateChanged(ChangeEvent e) {
-					handler.updateColor(Color.getHSBColor(((float) colorSlider.getValue()/100), 1, 1));
+					handler.updateColor(new HSBColor((float) colorSlider.getValue()/100, 1 , 1));
+							//Color.getHSBColor((, 1, 1));
 				}
             });
             add(colorSlider);
@@ -225,36 +239,24 @@ public class GUI {
     					
     					if(!fullscreen) {
     						fullscreen = true;
-    						frameFull = new Window(0, 0, "", true);
     						
+    						frameFull = new Window(0, 0, "", true);
     						frameFull.setExtendedState(JFrame.MAXIMIZED_BOTH);
     						frameFull.setVisible(true);
     						frameFull.add(frame.getContentPane());
-    						
     						updateCanvas(frameFull);
-    						
-    						System.out.println(getCanvasWidth()+ " " + getCanvasHeigth());
-    						
+    						canvas.requestFocus();
     						canvas.setSize(getCanvasWidth(), getCanvasHeigth());
     						canvas.setPreferredSize(new Dimension(getCanvasWidth(), getCanvasHeigth()));
     						
-    						System.out.println(canvas.getWidth() + " " + canvas.getHeight());
-    						
-    						//set content pane invisilble
     						botPanel.setVisible(false);
-    						//botPanel.setSize(0,0);
-
 
     						FRAME_WIDTH = frame.getWidth();
     						FRAME_HEIGTH = frame.getHeight();
     						
     						frame.dispose();
     						
-    						
-    						
-    						
     					}else {
-    						
     						
     						frame = new Window(FRAME_WIDTH, FRAME_HEIGTH,"hello");
     						frame.add(frameFull.getContentPane());
@@ -270,9 +272,7 @@ public class GUI {
     						fullscreen = false;
     					}
     				}
-    			}
-
-				
+    			}	
             });
             add(fullScreenBT);
             

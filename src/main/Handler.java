@@ -7,6 +7,7 @@ import java.util.Collections;
 import java.util.List;
 
 import boid.BoidB;
+import tools.HSBColor;
 
 public class Handler {
 	
@@ -20,19 +21,17 @@ public class Handler {
 		
 		flocks = Collections.synchronizedList(new ArrayList<List<BoidB>>());
 		boids =  Collections.synchronizedList(new ArrayList<BoidB>());
+		
 		flocks.add(boids);
 		
 		selectedFlock = 0;
 	}
 
-	public void tick() {
+	public synchronized void tick() {
 		synchronized(flocks){
 			for(List<BoidB> boids: flocks) {
-				System.out.println("tick flock");
 				synchronized(boids){
-					System.out.println("pre boid tick");
 					for(BoidB boid : boids) {
-						System.out.println("tick boid");
 						boid.tick(boid.flock(boids));
 					}
 				}
@@ -40,14 +39,11 @@ public class Handler {
 		}
 	}
 
-	public synchronized void render(Graphics g) {
+	public void render(Graphics g) {
 		synchronized(flocks){
 			for(List<BoidB> boids: flocks) {
-				System.out.println("render flock" + flocks.indexOf(boids));
 				synchronized(boids) {
-					System.out.println("preboid render");
 					for(BoidB boid : boids) {
-						System.out.println("render a boid");
 						boid.render(g);
 					}
 				}
@@ -55,30 +51,31 @@ public class Handler {
 		}	
 	}
 
-	public List<BoidB> getBoids() {
-		return flocks.get(selectedFlock);
+	
+	public void addBoid(BoidB boid) {
+		flocks.get(selectedFlock).add(boid);
 	}
-
+	
 	public void updateAlignment(double value) {
 		for(BoidB boid: flocks.get(selectedFlock)) {
-			boid.setAlignmentStr(value);
+			boid.setAlignmentStr(value * 0.01);
 		}
 	}
 
 	public void updateCohesion(double value) {
 		for(BoidB boid: flocks.get(selectedFlock)) {
-			boid.setCohesionStr(value);
+			boid.setCohesionStr(value* 0.01);
 		}
 	}
 	public void updateSeparation(double value) {
 		for(BoidB boid: flocks.get(selectedFlock)) {
-			boid.setSeparationStr(value);
+			boid.setSeparationStr(value* 0.01);
 		}
 	}
 
-	public void updateColor(Color value) {
+	public void updateColor(HSBColor hsbColor) {
 		for(BoidB boid: flocks.get(selectedFlock)) {
-			boid.setColor(value);
+			boid.setColor(hsbColor);
 		}
 		
 	}
@@ -87,11 +84,40 @@ public class Handler {
 		return flocks;
 	}
 
-	public void flockSelected(int selectedIndex) {
+	public void setFlockSelected(int selectedIndex) {
 		this.selectedFlock = selectedIndex;
 	}
 	public int getFlockSelected() {
 		return selectedFlock;
 	}
 
+	public int getAlignment() {
+		if(flocks.get(selectedFlock).size() == 0) {
+			return 0;
+		}else {
+			return flocks.get(selectedFlock).get(0).getAlignment();
+		}
+	}
+	public int getCohesion() {
+		if(flocks.get(selectedFlock).size() == 0) {
+			return 0;
+		}else {
+			return flocks.get(selectedFlock).get(0).getCohesion();
+		}
+	}
+	public int getSeparation() {
+		if(flocks.get(selectedFlock).size() == 0) {
+			return 0;
+		}else {
+			return flocks.get(selectedFlock).get(0).getSeparation();
+		}
+	}
+
+	public int getColorValue() {
+		if(flocks.get(selectedFlock).size() == 0) {
+			return 0;
+		}else {
+			return flocks.get(selectedFlock).get(0).getColor();
+		}
+	}
 }

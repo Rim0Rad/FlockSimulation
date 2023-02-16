@@ -8,6 +8,7 @@ import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.image.BufferStrategy;
+import java.io.File;
 
 import gui.GUI;
 
@@ -36,12 +37,9 @@ public class Flocking {
 	public Flocking(){
 		
 		window = new Window(WINDOW_WIDTH, WINDOW_HEIGTH, title);
-		
 		canvas = new Canvas();
-		
 		handler = new Handler();
 		gui = new GUI(canvas, handler, window);
-		
 		simulation();
 	}
 	
@@ -60,7 +58,6 @@ public class Flocking {
 	}
 	
 	private void render() {
-		System.out.println("Render");
 		BufferStrategy bs = canvas.getBufferStrategy();
 		if(bs == null) {
 			canvas.createBufferStrategy(2);
@@ -99,11 +96,20 @@ public class Flocking {
 */		
 		
 		g.dispose();
-		bs.show();
+		
+		//NOTE: creating new window when entering fullscreen mode sometimes happen in between the rendering which causes bs state change which throws an error
+		
+		try {
+			bs.show();
+		} catch(Exception e) {
+			System.out.println(e);
+		}
+		
+		
+		
 	}
 
 	private void tick() {
-		System.out.println("tick");
 		handler.tick();
 	}
 
