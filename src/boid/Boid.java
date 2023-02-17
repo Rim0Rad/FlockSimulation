@@ -1,7 +1,13 @@
 package boid;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Image;
+import java.awt.geom.AffineTransform;
+import java.awt.image.AffineTransformOp;
+import java.awt.image.BufferedImage;
 import java.util.Random;
 
 import main.Flocking;
@@ -26,8 +32,6 @@ public class Boid {
 	private int speed;
 	protected double direction;
 	private double wonderAngVel;
-	//private double ANGULAR_VEL_MAX = 3;
-	//private	double ANGULAR_VEL_MIN = -3;
 	
 	//Boid AI
 	private int wonderTimer = 0;
@@ -36,6 +40,7 @@ public class Boid {
 	
 	//Wall detection radius
 	protected int detectRadius = 100;
+	BufferedImage buffImg;
 	
 	public Boid(int x, int y, double direction) {
 		this.pos = new Coordinates2D(x, y);
@@ -43,7 +48,7 @@ public class Boid {
 		this.body = new Triangle(boidLenght, boidWidth, direction);
 		
 		this.color = new HSBColor(0, 0 ,0);
-		this.rotate(0);
+		this.rotate(0);	
 	}
 	
 	public Boid(){
@@ -58,17 +63,17 @@ public class Boid {
 		
 		this.wonderAngVel = 0;
 		this.speed = 1;
+		
 	}
 	
 	/* Models the behaviour of a boid.
-	 *  First: wall detection is ran to avoid leaving the canvas.
+	 *  
 	 *  Second: random movement of free boid
 	 *  
 	 *  */
 	public void tick() {
 		
 		double avoidWalsAngle = avoidWalls();
-		
 		if(avoidWalsAngle != 0) {
 			rotate(avoidWalsAngle);
 		}else{
@@ -80,11 +85,8 @@ public class Boid {
 	}
 	
 	public void render(Graphics g) {
-
 		g.setColor(color.getColor());
 		g.drawPolygon(body.relativeToX(pos.getX()), body.relativeToY(pos.getY()), 3);
-		g.fillOval( (int)pos.getX(), (int) pos.getY(), 2, 2);
-	
 	}
 	
 	/*Update x and y positions based boids direction */
@@ -112,7 +114,6 @@ public class Boid {
 			return wonderAngVel;
 		}
 	}
-	
 	
 	/*Avoid the edges of the canvas */
 	protected double avoidWalls(){

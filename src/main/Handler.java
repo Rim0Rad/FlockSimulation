@@ -2,6 +2,7 @@ package main;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -11,19 +12,15 @@ import tools.HSBColor;
 
 public class Handler {
 	
-	
 	private List<List<BoidB>> flocks;
 	private List<BoidB> boids;
 	private int selectedFlock;
 	
 	/* Handles simulation objects */
 	public Handler() {
-		
 		flocks = Collections.synchronizedList(new ArrayList<List<BoidB>>());
 		boids =  Collections.synchronizedList(new ArrayList<BoidB>());
-		
 		flocks.add(boids);
-		
 		selectedFlock = 0;
 	}
 
@@ -51,7 +48,7 @@ public class Handler {
 		}	
 	}
 
-	
+	/*TODO: if the problem with synchronized freezing appears again, could add boids to a separate array and add them at the end of tick */
 	public void addBoid(BoidB boid) {
 		flocks.get(selectedFlock).add(boid);
 	}
@@ -67,6 +64,7 @@ public class Handler {
 			boid.setCohesionStr(value* 0.01);
 		}
 	}
+	
 	public void updateSeparation(double value) {
 		for(BoidB boid: flocks.get(selectedFlock)) {
 			boid.setSeparationStr(value* 0.01);
@@ -77,19 +75,15 @@ public class Handler {
 		for(BoidB boid: flocks.get(selectedFlock)) {
 			boid.setColor(hsbColor);
 		}
-		
 	}
 
 	public List<List<BoidB>> getFlocks() {
 		return flocks;
 	}
 
-	public void setFlockSelected(int selectedIndex) {
-		this.selectedFlock = selectedIndex;
-	}
-	public int getFlockSelected() {
-		return selectedFlock;
-	}
+	public void setFlockSelected(int selectedIndex) {this.selectedFlock = selectedIndex;}
+	
+	public int getFlockSelected() {return selectedFlock;}
 
 	public int getAlignment() {
 		if(flocks.get(selectedFlock).size() == 0) {

@@ -1,6 +1,5 @@
 package boid;
 
-import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -75,9 +74,8 @@ public class BoidB extends Boid{
 		}
 	}
 	
-	/* Find all of the boids within detection radius */
+	/*Find all of the boids within detection radius*/
 	private ArrayList<Boid> detect(List<BoidB> boids) {
-		
 		ArrayList<Boid> boidArr = new ArrayList<Boid>();
 		for(Boid boid: boids) {
 			if(boid != this && Tools.withinRange(pos, boid.getPos(), detectRadius)) {
@@ -86,10 +84,10 @@ public class BoidB extends Boid{
 		}
 		return boidArr;
 	}
+
 	
-	
-	/* Calculates the alignment angle (diff between local flock average direction and current direction*/
-	private double calcualteAlignmentAngle(ArrayList<Boid> inRangeBoids) {
+	/*Calculates the alignment angle (diff between local flock average direction and current direction*/
+	private double calcualteAlignmentAngle(ArrayList<Boid> inRangeBoids){
 		double alignmentAngle = 0.0;
 		
 		for(Boid boid: inRangeBoids) {
@@ -151,7 +149,7 @@ public class BoidB extends Boid{
 	
 	public void setColor(HSBColor hsbColor) {this.color = hsbColor;}
 	public void setColor(int value) {
-		this.color.setHue(value);	
+		this.color.setHue(value);
 	}
 	public int getColor() {return this.color.getHue();}
 	
