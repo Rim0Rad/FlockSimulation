@@ -37,5 +37,12 @@ public class Triangle {
 	public int[] relativeToY(int y){
 		return new int[] {(int) (y + p1.getY()), (int) (y + p2.getY()), (int) (y + p3.getY())};
 	}
+
+	public void reSize(int size) {
+		length = size;
+		width = (int) size / 3;		
+		p2 = new Coordinates2D(-length, -width);
+		p3 = new Coordinates2D(-length, width);
+	}
 	
 }

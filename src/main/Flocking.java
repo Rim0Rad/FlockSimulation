@@ -66,23 +66,12 @@ public class Flocking {
 		if(g == null) {
 			return;
 		}
-		
-		
-		//Background color
+			
+		//Set background color
 		g.setColor(new Color(0, 0, 0, .1f));
 		g.fillRect(0, 0, getCanvasWidth(), getCanvasHeight());
-				
-				
-		//Draw wall detection zone lines
-	/*	int offest = 150;
-		g.setStroke(new BasicStroke());
-		g.setColor(Color.yellow);
-		g.drawLine(0, offest, getCanvasWidth(), offest);
-		g.drawLine(offest, 0, offest, getCanvasHeight());
-		g.drawLine(0, getCanvasHeight()-offest, getCanvasWidth(), getCanvasHeight() - offest);
-		g.drawLine(getCanvasWidth() - offest, 0, getCanvasWidth() - offest, getCanvasHeight());
-*/
 		
+		//Draw boids
 		handler.render(g);
 		
 		//Draw wall detection zone lines

@@ -1,34 +1,33 @@
 package main;
 
-import java.awt.Color;
 import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import boid.BoidB;
+import boid.BoidF;
 import tools.HSBColor;
 
 public class Handler {
 	
-	private List<List<BoidB>> flocks;
-	private List<BoidB> boids;
+	private List<List<BoidF>> flocks;
+	private List<BoidF> boids;
 	private int selectedFlock;
 	
 	/* Handles simulation objects */
 	public Handler() {
-		flocks = Collections.synchronizedList(new ArrayList<List<BoidB>>());
-		boids =  Collections.synchronizedList(new ArrayList<BoidB>());
+		flocks = Collections.synchronizedList(new ArrayList<List<BoidF>>());
+		boids =  Collections.synchronizedList(new ArrayList<BoidF>());
 		flocks.add(boids);
 		selectedFlock = 0;
 	}
 
+	/* Run boid behaviour calculations */
 	public synchronized void tick() {
 		synchronized(flocks){
-			for(List<BoidB> boids: flocks) {
+			for(List<BoidF> boids: flocks) {
 				synchronized(boids){
-					for(BoidB boid : boids) {
+					for(BoidF boid : boids) {
 						boid.tick(boid.flock(boids));
 					}
 				}
@@ -36,11 +35,12 @@ public class Handler {
 		}
 	}
 
+	/* Draw boids */
 	public void render(Graphics g) {
 		synchronized(flocks){
-			for(List<BoidB> boids: flocks) {
+			for(List<BoidF> boids: flocks) {
 				synchronized(boids) {
-					for(BoidB boid : boids) {
+					for(BoidF boid : boids) {
 						boid.render(g);
 					}
 				}
@@ -49,49 +49,57 @@ public class Handler {
 	}
 
 	/*TODO: if the problem with synchronized freezing appears again, could add boids to a separate array and add them at the end of tick */
-	public void addBoid(BoidB boid) {
+	public void addBoid(BoidF boid) {
 		flocks.get(selectedFlock).add(boid);
 	}
 	
 	public void updateAlignment(double value) {
-		for(BoidB boid: flocks.get(selectedFlock)) {
+		for(BoidF boid: flocks.get(selectedFlock)) {
 			boid.setAlignmentStr(value * 0.01);
 		}
 	}
 
 	public void updateCohesion(double value) {
-		for(BoidB boid: flocks.get(selectedFlock)) {
+		for(BoidF boid: flocks.get(selectedFlock)) {
 			boid.setCohesionStr(value* 0.01);
 		}
 	}
 	
 	public void updateSeparation(double value) {
-		for(BoidB boid: flocks.get(selectedFlock)) {
+		for(BoidF boid: flocks.get(selectedFlock)) {
 			boid.setSeparationStr(value* 0.01);
 		}
 	}
 
 	public void updateColor(HSBColor hsbColor) {
-		for(BoidB boid: flocks.get(selectedFlock)) {
+		for(BoidF boid: flocks.get(selectedFlock)) {
 			boid.setColor(hsbColor);
 		}
 	}
-
-	public List<List<BoidB>> getFlocks() {
-		return flocks;
+	
+	public void updateSize(int size) {
+		for(BoidF boid: flocks.get(selectedFlock)) {
+			boid.setSize(size);
+		}
 	}
 
-	public void setFlockSelected(int selectedIndex) {this.selectedFlock = selectedIndex;}
+	public List<List<BoidF>> getFlocks() {return flocks;}
+
+	public void setFlockSelected(int selectedIndex) {
+		this.selectedFlock = selectedIndex;
+		}
 	
 	public int getFlockSelected() {return selectedFlock;}
 
+	/* Get the alignment strength of the currently selected flock */
 	public int getAlignment() {
-		if(flocks.get(selectedFlock).size() == 0) {
-			return 0;
-		}else {
-			return flocks.get(selectedFlock).get(0).getAlignment();
-		}
+			if(flocks.get(selectedFlock).isEmpty()) {
+				return 0;
+			}else {
+				return flocks.get(selectedFlock).get(0).getAlignment();
+			}
 	}
+	/* Get the cohesion strength of the currently selected flock */
 	public int getCohesion() {
 		if(flocks.get(selectedFlock).size() == 0) {
 			return 0;
@@ -99,6 +107,7 @@ public class Handler {
 			return flocks.get(selectedFlock).get(0).getCohesion();
 		}
 	}
+	/* Get the separation strength of the currently selected flock */
 	public int getSeparation() {
 		if(flocks.get(selectedFlock).size() == 0) {
 			return 0;
@@ -107,6 +116,7 @@ public class Handler {
 		}
 	}
 
+	/* Get colors hue of selected floc */
 	public int getColorValue() {
 		if(flocks.get(selectedFlock).size() == 0) {
 			return 0;
@@ -114,4 +124,19 @@ public class Handler {
 			return flocks.get(selectedFlock).get(0).getColor();
 		}
 	}
+
+	/* Remove all of the boids and flocks from simulation */
+	public void clear() {
+		System.out.println(flocks);
+		synchronized(flocks) {
+			flocks.removeAll(flocks);
+			boids.removeAll(boids);
+			flocks.add(boids);
+			selectedFlock = 0;
+		}	
+	}
+
+	
+
+	
 }

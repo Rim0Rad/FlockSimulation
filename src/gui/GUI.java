@@ -6,10 +6,6 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ContainerEvent;
-import java.awt.event.ContainerListener;
-import java.awt.event.HierarchyBoundsListener;
-import java.awt.event.HierarchyEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
@@ -26,7 +22,7 @@ import javax.swing.border.TitledBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import boid.BoidB;
+import boid.BoidF;
 import main.Handler;
 import main.Window;
 import tools.HSBColor;
@@ -51,15 +47,21 @@ public class GUI {
 	private JSlider cohesionSlider;
 	private JSlider separationSlider;
 	private JSlider colorSlider;
+	private JSlider sizeSlider;
 	
 	private JButton fullScreenBT;
+	
+	private JComboBox<String> flockSelectCB; 
+	
 	private BotomPanel botPanel;
 	
 	/* Colors */
 	private Color btBackgrounClr = new Color(100, 120, 250);
 	private Color btForegrounClr = new Color(250, 250, 250);
 	
-	private JComboBox<String> flockSelectCB; 
+	private Color sliderForegrounClr = new Color(100, 120, 250);
+	
+	
 	
 	public GUI(Canvas canvas, Handler handler, Window window){
 		
@@ -67,6 +69,7 @@ public class GUI {
 		frameFull = new Window(JFrame.MAXIMIZED_HORIZ, JFrame.MAXIMIZED_VERT, window.getName(), true);
 		this.handler = handler;
 		this.canvas = canvas;
+		
 		this.canvas.addKeyListener(new KeyListener() {
 			@Override
 			public void keyTyped(KeyEvent e) {}
@@ -115,9 +118,7 @@ public class GUI {
     			@Override
     			public void actionPerformed(ActionEvent e) {
     					for(int i = 0; i < 10; i++) {
-    						
-    						BoidB boid = new BoidB();
-    						System.out.println(colorSlider.getValue());
+    						BoidF boid = new BoidF();
     						boid.setColor(colorSlider.getValue());
     						boid.updateParameters(alignmentSlider.getValue(), cohesionSlider.getValue(),separationSlider.getValue());
     						
@@ -132,7 +133,7 @@ public class GUI {
     			@Override
     			public void actionPerformed(ActionEvent e) {
     				synchronized(handler.getFlocks()){
-    					handler.getFlocks().add(Collections.synchronizedList(new ArrayList<BoidB>()));
+    					handler.getFlocks().add(Collections.synchronizedList(new ArrayList<BoidF>()));
     					flockSelectCB.addItem("Flock " + handler.getFlocks().size());
     					flockSelectCB.setSelectedItem("Flock " + handler.getFlocks().size());
     				}
@@ -140,16 +141,34 @@ public class GUI {
             });
             add(addFlockBT); 
             
+            
+            //TODO: remove all of the flocks and boids, and reset to initial state
+            JButton clearBT = newButton("Clear",btBackgrounClr, btForegrounClr);
+            clearBT.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+	
+					flockSelectCB.removeAllItems();
+					handler.clear();
+					handler.setFlockSelected(flockSelectCB.getSelectedIndex());
+					flockSelectCB.addItem("Flock " + handler.getFlocks().size());			
+				}
+            });
+            add(clearBT);
+            
             flockSelectCB = new JComboBox<String>();
             flockSelectCB.addItem("Flock " + handler.getFlocks().size());
             flockSelectCB.setEditable(false);
             flockSelectCB.addItemListener(new ItemListener() {
 				@Override
 				public void itemStateChanged(ItemEvent e) {
-					handler.setFlockSelected(flockSelectCB.getSelectedIndex());
-					resetFlockSlider();
+					if(flockSelectCB.getItemCount() != 0) {
+						handler.setFlockSelected(flockSelectCB.getSelectedIndex());
+						resetFlockSliders();
+					}
+					
 				}
-				private void resetFlockSlider() {
+				private void resetFlockSliders() {
 					alignmentSlider.setValue(handler.getAlignment());
 					cohesionSlider.setValue(handler.getCohesion());
 					separationSlider.setValue(handler.getSeparation());
@@ -157,7 +176,7 @@ public class GUI {
             });
             add(flockSelectCB);
             
-            alignmentSlider = jSliderSetup(0, 0 , 100, 0, 10, 5, "Alignment", new Color(100, 120, 250)); 
+            alignmentSlider = jSliderSetup(0, 0 , 100, 0, 10, 5, "Alignment", sliderForegrounClr); 
             alignmentSlider.addChangeListener(new ChangeListener() {
 				@Override
 				public void stateChanged(ChangeEvent e) {
@@ -166,7 +185,7 @@ public class GUI {
             });
             add(alignmentSlider);
             
-            cohesionSlider = jSliderSetup(0, 0 , 100, 0, 10, 5, "Cohesion", new Color(100, 120, 250));
+            cohesionSlider = jSliderSetup(0, 0 , 100, 0, 10, 5, "Cohesion", sliderForegrounClr);
             cohesionSlider.addChangeListener(new ChangeListener() {
 				@Override
 				public void stateChanged(ChangeEvent e) {
@@ -175,7 +194,7 @@ public class GUI {
             });
             add(cohesionSlider);
             
-            separationSlider = jSliderSetup(0, 0 , 100, 0, 10, 5, "Separation", new Color(100, 120, 250));
+            separationSlider = jSliderSetup(0, 0 , 100, 0, 10, 5, "Separation", sliderForegrounClr);
             separationSlider.addChangeListener(new ChangeListener() {
 				@Override
 				public void stateChanged(ChangeEvent e) {
@@ -184,7 +203,7 @@ public class GUI {
             });
             add(separationSlider);
             
-            colorSlider = jSliderSetup(0, 0 , 100, 40, 1, 0, "Color", new Color(100, 120, 250));
+            colorSlider = jSliderSetup(0, 0 , 100, 40, 1, 0, "Color", sliderForegrounClr);
             colorSlider.addChangeListener(new ChangeListener() {
 				@Override
 				public void stateChanged(ChangeEvent e) {
@@ -194,6 +213,20 @@ public class GUI {
             });
             add(colorSlider);
             
+            sizeSlider = jSliderSetup(0, 0, 50, 10, 2, 1, "Size", sliderForegrounClr);
+            sizeSlider.addChangeListener(new ChangeListener() {
+
+				@Override
+				public void stateChanged(ChangeEvent e) {
+					
+					handler.updateSize(sizeSlider.getValue());
+				}
+            	
+            });
+            add(sizeSlider);
+            
+            
+            //TODO: canvas does not resise with the window
             fullScreenBT = newButton("Fullscreen", btBackgrounClr,  btForegrounClr);
             fullScreenBT.addActionListener(new ActionListener(){
     			@Override
@@ -231,10 +264,14 @@ public class GUI {
     						
     						frameFull.dispose();
 
-    					}
+    					} 
+    					
     				}
+    				
     			}	
+    			
             });
+            
             add(fullScreenBT);
 		}
 	}

@@ -1,12 +1,6 @@
 package boid;
 
-import java.awt.BasicStroke;
-import java.awt.Color;
 import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Image;
-import java.awt.geom.AffineTransform;
-import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.util.Random;
 
@@ -21,8 +15,9 @@ public class Boid {
 	//Visual
 	protected HSBColor color;
 	
-	private int boidLenght = 8;
-	private int boidWidth = 3;
+	private int size;
+	private int boidLenght;
+	private int boidWidth;
 	private Triangle body;
 	
 	//Position
@@ -45,17 +40,24 @@ public class Boid {
 	public Boid(int x, int y, double direction) {
 		this.pos = new Coordinates2D(x, y);
 		this.direction = direction;
-		this.body = new Triangle(boidLenght, boidWidth, direction);
 		
-		this.color = new HSBColor(0, 0 ,0);
-		this.rotate(0);	
+		size = 10;
+		boidLenght = size;
+		boidWidth = (int) size / 3;
+		body = new Triangle(boidLenght, boidWidth, direction);
+		color = new HSBColor(0, 0 ,0);
+		rotate(0);	
 	}
 	
 	public Boid(){
 		int x = (int) (Math.random() * (Flocking.getWindowWidth() - 200) + 100);
 		int y = (int) (Math.random() * (Flocking.getCanvasHeight() - 200) + 100);
-		
 		this.pos = new Coordinates2D(x, y);
+		
+		size = 10;
+		boidLenght = size;
+		boidWidth = (int) size / 3;
+		
 		this.body = new Triangle(boidLenght, boidWidth, direction);
 		
 		this.direction =  Math.random() * (180 + 180) - 180;
@@ -86,7 +88,8 @@ public class Boid {
 	
 	public void render(Graphics g) {
 		g.setColor(color.getColor());
-		g.drawPolygon(body.relativeToX(pos.getX()), body.relativeToY(pos.getY()), 3);
+		g.fillPolygon(body.relativeToX(pos.getX()), body.relativeToY(pos.getY()), 3);
+		//g.fillp
 	}
 	
 	/*Update x and y positions based boids direction */
@@ -170,5 +173,8 @@ public class Boid {
 		return direction;
 	}
 
-
+	public void setSize(int size) {
+		this.size = size;
+		this.body.reSize(size);
+	}
 }
