@@ -9,7 +9,6 @@ import tools.Tools;
 
 public class BoidF extends Boid{
 
-	
 	private double alignmentStr = 0.0;
 	private double separationStr = 0.0;
 	private double cohesionStr = 0.0;
@@ -20,11 +19,13 @@ public class BoidF extends Boid{
 	public BoidF(int x, int y, double direction) {
 		super(x, y, direction);
 	}
+	
 	/* Create a boid at random position and direction */
 	public BoidF() {
 		super();
 	}
 
+	
 	public void tick(double flockAngle) {
 		
 		if(flockAngle == 0.0 ) {
@@ -37,7 +38,8 @@ public class BoidF extends Boid{
 		
 	}
 	
-	//Flocking algorithm
+	/* Flocking algorithm:
+	 * calculates each component of flocking, combines the result and returns the boid direction */
 	public double flock(List<BoidF> boids) {
 		double alignAngle = 0.0;
 		double sepAngle = 0.0;
@@ -164,6 +166,7 @@ public class BoidF extends Boid{
 	public int getAlignment() {return (int) (this.alignmentStr * 100);}
 	public int getCohesion() {return (int) (this.cohesionStr * 100);}
 	public int getSeparation() {return (int) (this.separationStr * 100);}
-	
+
+
 	
 }

@@ -136,6 +136,21 @@ public class Handler {
 		}	
 	}
 
+	public int getSize() {
+		if(flocks.get(selectedFlock).size() == 0) {
+			return 0;
+		}else {
+			return flocks.get(selectedFlock).get(0).getSize();
+		}
+	}
+
+	public void updateSpeed(int value) {
+		for(BoidF boid: flocks.get(selectedFlock)) {
+			boid.setSpeed(value);
+		}
+		
+	}
+
 	
 
 	

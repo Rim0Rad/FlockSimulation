@@ -1,5 +1,8 @@
 package main;
 
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowStateListener;
+
 import javax.swing.JFrame;
 
 public class Window extends JFrame {
@@ -16,7 +19,6 @@ public class Window extends JFrame {
 		setVisible(true);
         setLocationRelativeTo(null);
 		setResizable(true);
-
 	}
 
 	public Window(int windowSizeX, int windowSizeY, String title, boolean decoration) {

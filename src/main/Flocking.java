@@ -26,19 +26,19 @@ public class Flocking {
 	
 	private static Window window;
 	private static GUI gui;
-	private Canvas canvas;
+	//private Canvas canvas;
 	private Handler handler;
 	
 	//Simulation
 	private static boolean running = true;
-	private int timeDelay = 20;
+	private int timeDelay = 30;
 	
 	public Flocking(){
 		
 		window = new Window(WINDOW_WIDTH, WINDOW_HEIGTH, title);
-		canvas = new Canvas();
+		//canvas = new Canvas();
 		handler = new Handler();
-		gui = new GUI(canvas, handler, window);
+		gui = new GUI(handler, window);
 		simulation();
 	}
 	
@@ -57,6 +57,7 @@ public class Flocking {
 	}
 	
 	private void render() {
+		Canvas canvas = gui.getCanvas();
 		BufferStrategy bs = canvas.getBufferStrategy();
 		if(bs == null) {
 			canvas.createBufferStrategy(2);

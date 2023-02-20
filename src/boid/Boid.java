@@ -15,9 +15,9 @@ public class Boid {
 	//Visual
 	protected HSBColor color;
 	
-	private int size;
-	private int boidLenght;
-	private int boidWidth;
+	private int size = 10;
+	private int boidLenght = size;
+	private int boidWidth = size / 3;
 	private Triangle body;
 	
 	//Position
@@ -41,9 +41,8 @@ public class Boid {
 		this.pos = new Coordinates2D(x, y);
 		this.direction = direction;
 		
-		size = 10;
-		boidLenght = size;
-		boidWidth = (int) size / 3;
+		
+		
 		body = new Triangle(boidLenght, boidWidth, direction);
 		color = new HSBColor(0, 0 ,0);
 		rotate(0);	
@@ -52,25 +51,20 @@ public class Boid {
 	public Boid(){
 		int x = (int) (Math.random() * (Flocking.getWindowWidth() - 200) + 100);
 		int y = (int) (Math.random() * (Flocking.getCanvasHeight() - 200) + 100);
-		this.pos = new Coordinates2D(x, y);
+		pos = new Coordinates2D(x, y);
 		
-		size = 10;
-		boidLenght = size;
-		boidWidth = (int) size / 3;
+		body = new Triangle(boidLenght, boidWidth, direction);
+		direction =  Math.random() * (180 + 180) - 180;
+		color =  new HSBColor(0.2f, 1 ,1);
 		
-		this.body = new Triangle(boidLenght, boidWidth, direction);
-		
-		this.direction =  Math.random() * (180 + 180) - 180;
-		this.color =  new HSBColor(0.2f, 1 ,1);
-		
-		this.wonderAngVel = 0;
-		this.speed = 1;
+		wonderAngVel = 0;
+		speed = 2;
 		
 	}
 	
 	/* Models the behaviour of a boid.
 	 *  
-	 *  Second: random movement of free boid
+	 *   random movement of free boid
 	 *  
 	 *  */
 	public void tick() {
@@ -88,8 +82,10 @@ public class Boid {
 	
 	public void render(Graphics g) {
 		g.setColor(color.getColor());
-		g.fillPolygon(body.relativeToX(pos.getX()), body.relativeToY(pos.getY()), 3);
-		//g.fillp
+		g.drawPolygon(body.relativeToX(pos.getX()), body.relativeToY(pos.getY()), 3);
+		//TODO: make filled polygon a selectable option
+		//g.fillPolygon(body.relativeToX(pos.getX()), body.relativeToY(pos.getY()), 3);
+		
 	}
 	
 	/*Update x and y positions based boids direction */
@@ -177,4 +173,12 @@ public class Boid {
 		this.size = size;
 		this.body.reSize(size);
 	}
+	public int getSize() {
+		return size;
+	}
+	
+	public void setSpeed(int value) {
+		this.speed = value;
+	}
+	
 }
