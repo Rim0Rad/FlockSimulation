@@ -31,7 +31,7 @@ public class Flocking {
 	
 	//Simulation
 	private static boolean running = true;
-	private int timeDelay = 30;
+	private int timeDelay = 20;
 	
 	public Flocking(){
 		

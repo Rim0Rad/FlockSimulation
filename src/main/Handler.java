@@ -151,6 +151,12 @@ public class Handler {
 		
 	}
 
+	public void removeFlock(int selectedIndex) {
+		flocks.remove(selectedIndex);
+		selectedFlock--;
+		
+	}
+
 	
 
 	

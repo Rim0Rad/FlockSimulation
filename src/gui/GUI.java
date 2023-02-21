@@ -3,9 +3,13 @@ package gui;
 import java.awt.BorderLayout;
 import java.awt.Canvas;
 import java.awt.Color;
+import java.awt.Component;
+import java.awt.Container;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Panel;
 import java.awt.RenderingHints;
 import java.awt.Shape;
 import java.awt.event.ActionEvent;
@@ -20,6 +24,7 @@ import java.awt.geom.RoundRectangle2D;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -27,6 +32,8 @@ import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
+import javax.swing.border.Border;
+import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -39,7 +46,7 @@ import tools.HSBColor;
 
 public class GUI {
 	
-	private int botPanHeight = 50;
+	private int botPanHeight = 90;
 	
 	private JFrame frame;
 	private JFrame frameFull;
@@ -125,6 +132,7 @@ public class GUI {
 		frame.revalidate();
 	}
 	
+	/* Recalculate canvas size for a new window */
 	public void updateCanvas(JFrame frame) {
 		if(fullscreen) {
 			canvasHeight = frame.getHeight();
@@ -148,9 +156,50 @@ public class GUI {
 			this.setPreferredSize(new Dimension(0, botPanHeight));
 			this.setBackground(new Color(100, 120, 180));
 			
-			/* Add boids to current flock: currently set to 10/click */
+			
+			 /* Adds a new flock updates combo box*/
+            JButton addFlockBT = newButton("Add Flock", btBackgrounClr, btForegrounClr);
+            addFlockBT.addActionListener(new ActionListener(){
+    			@Override
+    			public void actionPerformed(ActionEvent e) {
+    				synchronized(handler.getFlocks()){
+    					handler.getFlocks().add(Collections.synchronizedList(new ArrayList<BoidF>()));
+    					flockSelectCB.addItem("Flock " + handler.getFlocks().size());
+    					flockSelectCB.setSelectedItem("Flock " + handler.getFlocks().size());
+    				}
+    			}
+            });
+            add(addFlockBT); 
+			
+			/* Panel for boid adding buttons: add 1, add 10, add 100 */
+			Panel addPanel = new Panel();
+			addPanel.setLayout(new BoxLayout(addPanel, 1));
+			
+			//TODO: add a border around button groups
+			//Container c = new Container();
+			//c.setLayout(new BoxLayout(c,1));
+			//c.component
+			//Border border = new LineBorder(Color.white);
+			
             JButton addBoidBT = newButton("Add Boid", btBackgrounClr, btForegrounClr);
             addBoidBT.addActionListener(new ActionListener(){
+            	
+    			@Override
+    			public void actionPerformed(ActionEvent e) {
+    					
+					BoidF boid = new BoidF();
+					boid.setColor(colorSlider.getValue());
+					boid.updateParameters(alignmentSlider.getValue(), cohesionSlider.getValue(),separationSlider.getValue());
+					boid.setSize(sizeSlider.getValue());
+					boid.setSpeed(speedSlider.getValue());
+					handler.addBoid(boid);
+			
+    			}
+            });
+            addPanel.add(addBoidBT);
+            
+            JButton add10BoidBT = newButton("Add 10", btBackgrounClr, btForegrounClr);
+            add10BoidBT.addActionListener(new ActionListener(){
             	
     			@Override
     			public void actionPerformed(ActionEvent e) {
@@ -164,21 +213,43 @@ public class GUI {
     					}
     			}
             });
-            add(addBoidBT);
+            addPanel.add(add10BoidBT);
             
-            /* Adds a new flock updates combo box*/
-            JButton addFlockBT = newButton("Add Flock", btBackgrounClr, btForegrounClr);
-            addFlockBT.addActionListener(new ActionListener(){
+            JButton add100BoidBT = newButton("Add 100", btBackgrounClr, btForegrounClr);
+            add100BoidBT.addActionListener(new ActionListener(){
+            	
     			@Override
     			public void actionPerformed(ActionEvent e) {
-    				synchronized(handler.getFlocks()){
-    					handler.getFlocks().add(Collections.synchronizedList(new ArrayList<BoidF>()));
-    					flockSelectCB.addItem("Flock " + handler.getFlocks().size());
-    					flockSelectCB.setSelectedItem("Flock " + handler.getFlocks().size());
-    				}
+    					for(int i = 0; i < 100; i++) {
+    						BoidF boid = new BoidF();
+    						boid.setColor(colorSlider.getValue());
+    						boid.updateParameters(alignmentSlider.getValue(), cohesionSlider.getValue(),separationSlider.getValue());
+    						boid.setSize(sizeSlider.getValue());
+    						boid.setSpeed(speedSlider.getValue());
+    						handler.addBoid(boid);
+    					}
     			}
             });
-            add(addFlockBT); 
+            addPanel.add(add100BoidBT);
+            add(addPanel);
+            
+            
+            Panel removePanel = new Panel();
+            removePanel.setLayout(new BoxLayout(removePanel, 1));
+            
+            /* Remove currently selected flock */
+            JButton removeFlockBT = newButton("Remove Flock",btBackgrounClr, btForegrounClr);
+            removeFlockBT.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+	
+					flockSelectCB.remove(flockSelectCB.getSelectedIndex());
+					handler.removeFlock(flockSelectCB.getSelectedIndex());
+					handler.setFlockSelected(flockSelectCB.getSelectedIndex());
+					//flockSelectCB.addItem("Flock " + handler.getFlocks().size());			
+				}
+            });
+            removePanel.add(removeFlockBT);
             
             /* Remove all of the flocks and boids, and reset to initial state */
             JButton clearBT = newButton("Clear",btBackgrounClr, btForegrounClr);
@@ -192,7 +263,8 @@ public class GUI {
 					flockSelectCB.addItem("Flock " + handler.getFlocks().size());			
 				}
             });
-            add(clearBT);
+            removePanel.add(clearBT);
+            add(removePanel);
             
             flockSelectCB = new JComboBox<String>();
             flockSelectCB.addItem("Flock " + handler.getFlocks().size());
@@ -223,7 +295,13 @@ public class GUI {
             
             /* When enabled, keeps the current flocks setting for new flock*/
             transferSettingCB = new JCheckBox("Save Settings");
+            transferSettingCB.setBackground(btBackgrounClr);
+            transferSettingCB.setForeground(btForegrounClr);
             add(transferSettingCB);
+            
+            
+            Panel flockPanel = new Panel();
+            flockPanel.setLayout(new BoxLayout(flockPanel, 1));
             
             alignmentSlider = jSliderSetup(0, 0 , 100, 0, 10, 5, "Alignment", sliderBackgroundClr, sliderForegrounClr); 
             alignmentSlider.addChangeListener(new ChangeListener() {
@@ -232,7 +310,7 @@ public class GUI {
 					handler.updateAlignment(alignmentSlider.getValue());
 				}
             });
-            add(alignmentSlider);
+            flockPanel.add(alignmentSlider);
             
             cohesionSlider = jSliderSetup(0, 0 , 100, 0, 10, 5, "Cohesion", sliderBackgroundClr, sliderForegrounClr);
             cohesionSlider.addChangeListener(new ChangeListener() {
@@ -241,7 +319,7 @@ public class GUI {
 					handler.updateCohesion(cohesionSlider.getValue());
 				}
             });
-            add(cohesionSlider);
+            flockPanel.add(cohesionSlider);
             
             separationSlider = jSliderSetup(0, 0 , 100, 0, 10, 5, "Separation", sliderBackgroundClr, sliderForegrounClr);
             separationSlider.addChangeListener(new ChangeListener() {
@@ -250,8 +328,11 @@ public class GUI {
 					handler.updateSeparation(separationSlider.getValue());
 				}
             });
-            add(separationSlider);
+            flockPanel.add(separationSlider);
+            add(flockPanel);
             
+            Panel atributesPanel = new Panel();
+            atributesPanel.setLayout(new BoxLayout(atributesPanel, 1));
             colorSlider = jSliderSetup(0, 0 , 100, 40, 1, 0, "Color", sliderBackgroundClr, sliderForegrounClr);
             colorSlider.addChangeListener(new ChangeListener() {
 
@@ -261,7 +342,7 @@ public class GUI {
 		
 				}
             });
-            add(colorSlider);
+            atributesPanel.add(colorSlider);
             
             sizeSlider = jSliderSetup(0, 0, 50, 10, 1, 1, "Size", sliderBackgroundClr,sliderForegrounClr);
             sizeSlider.addChangeListener(new ChangeListener() {
@@ -273,9 +354,9 @@ public class GUI {
 				}
             	
             });
-            add(sizeSlider);
+            atributesPanel.add(sizeSlider);
             
-            //TODO: add speed slider
+            /* Control the speed of the boid */
             speedSlider = jSliderSetup(0, 0, 20, 2, 1, 1, "Speed", sliderBackgroundClr,sliderForegrounClr);
             speedSlider.addChangeListener(new ChangeListener(){
 
@@ -286,8 +367,13 @@ public class GUI {
 				}
             	
             });
-            add(speedSlider);
+            atributesPanel.add(speedSlider);
+            add(atributesPanel);
             
+            /* Enables full screen mode:
+             * Creates new full sized undecorated frame, transfer contents from windowed frame
+             * and dispose of the old frame.
+             */
             fullScreenBT = newButton("Fullscreen", btBackgrounClr,  btForegrounClr);
             fullScreenBT.addActionListener(new ActionListener(){
     			@Override
@@ -357,6 +443,7 @@ public class GUI {
 		slider.setPaintTicks(false);
 		slider.setBackground(backColor);
 		TitledBorder border  = new TitledBorder(title);
+		border.setTitleFont(new Font(null, 0, 10));
 		border.setTitleColor(frontColor);
 		slider.setBorder(border);
 		
