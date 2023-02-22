@@ -10,6 +10,7 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Panel;
+import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.Shape;
 import java.awt.event.ActionEvent;
@@ -21,9 +22,11 @@ import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.geom.RoundRectangle2D;
+import java.io.Console;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -32,6 +35,7 @@ import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
+import javax.swing.SwingConstants;
 import javax.swing.border.Border;
 import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
@@ -53,10 +57,10 @@ public class GUI {
 	private int FRAME_WIDTH;
 	private int FRAME_HEIGTH;
 	
-	private boolean fullscreen = false;
-	
 	private Canvas canvas;
 	private int canvasWidth, canvasHeight;
+	
+	private boolean fullscreen = false;
 	
 	private Handler handler;
 	
@@ -73,6 +77,10 @@ public class GUI {
 	private JCheckBox transferSettingCB;
 	
 	
+	//private Rectangle panelBounds = new Rectangle(50, 50,50,500);
+	private Dimension buttonSize = new Dimension(200,30);
+	
+	private Font font = new Font(null, 0, 10);
 	/* Component Colours */
 	//Buttons
 	private Color btBackgrounClr = new Color(100, 120, 250);
@@ -87,8 +95,21 @@ public class GUI {
 		this.frame = window;
 		this.handler = handler;
 		
-		canvas = new Canvas();
+		canvas = newCanvas();
 		updateCanvas(frame);
+
+		
+		botPanel  = new BotomPanel();
+		
+		frame.add(canvas, BorderLayout.CENTER);
+		frame.add(botPanel, BorderLayout.SOUTH);
+		
+		frame.revalidate();
+	}
+	
+	/* Set up canvas listeners and settings */
+	private Canvas newCanvas() {
+		Canvas canvas = new Canvas();
 		// Resize the canvas when the frame changes size
 		canvas.addHierarchyBoundsListener(new HierarchyBoundsListener() {
 			
@@ -102,8 +123,6 @@ public class GUI {
 				}else {
 					updateCanvas(frame);
 				}
-				
-				
 			}
 		});
 		// ESC - to exit full screen mode
@@ -123,15 +142,9 @@ public class GUI {
 			public void keyReleased(KeyEvent e) {}
 			
 		});
-		
-		botPanel  = new BotomPanel();
-		
-		frame.add(canvas, BorderLayout.CENTER);
-		frame.add(botPanel, BorderLayout.SOUTH);
-		
-		frame.revalidate();
+		return canvas;
 	}
-	
+
 	/* Recalculate canvas size for a new window */
 	public void updateCanvas(JFrame frame) {
 		if(fullscreen) {
@@ -150,15 +163,18 @@ public class GUI {
 	public class BotomPanel extends JPanel{
 		private static final long serialVersionUID = 1L;
 		
-
 		public BotomPanel(){
 			
+			/* Botom Panel setings */
 			this.setPreferredSize(new Dimension(0, botPanHeight));
 			this.setBackground(new Color(100, 120, 180));
 			
 			
-			 /* Adds a new flock updates combo box*/
+			JPanel flocksPanel = newJPanel();
+			
+			 /* Adds a new flock, updates combo box*/
             JButton addFlockBT = newButton("Add Flock", btBackgrounClr, btForegrounClr);
+            
             addFlockBT.addActionListener(new ActionListener(){
     			@Override
     			public void actionPerformed(ActionEvent e) {
@@ -169,18 +185,21 @@ public class GUI {
     				}
     			}
             });
-            add(addFlockBT); 
+            /* When enabled, keeps the current flocks setting for new flock*/
+            transferSettingCB = new JCheckBox("Save Settings");
+            transferSettingCB.setBackground(btBackgrounClr);
+            transferSettingCB.setForeground(btForegrounClr);
+            System.out.println(transferSettingCB.getAlignmentX());
+            
+            flocksPanel.add(Box.createRigidArea(new Dimension(50,10)));
+            flocksPanel.add(addFlockBT);
+            flocksPanel.add(Box.createRigidArea(new Dimension(0,10)));
+            flocksPanel.add(transferSettingCB);
+            add(flocksPanel);
+            
 			
-			/* Panel for boid adding buttons: add 1, add 10, add 100 */
-			Panel addPanel = new Panel();
-			addPanel.setLayout(new BoxLayout(addPanel, 1));
-			
-			//TODO: add a border around button groups
-			//Container c = new Container();
-			//c.setLayout(new BoxLayout(c,1));
-			//c.component
-			//Border border = new LineBorder(Color.white);
-			
+			JPanel addPanel = newJPanel();
+			/* ADD 1 BOID */
             JButton addBoidBT = newButton("Add Boid", btBackgrounClr, btForegrounClr);
             addBoidBT.addActionListener(new ActionListener(){
             	
@@ -196,8 +215,7 @@ public class GUI {
 			
     			}
             });
-            addPanel.add(addBoidBT);
-            
+            /* ADD 10 BOIDS */
             JButton add10BoidBT = newButton("Add 10", btBackgrounClr, btForegrounClr);
             add10BoidBT.addActionListener(new ActionListener(){
             	
@@ -213,8 +231,7 @@ public class GUI {
     					}
     			}
             });
-            addPanel.add(add10BoidBT);
-            
+            /*ADD 100 BOIDS */
             JButton add100BoidBT = newButton("Add 100", btBackgrounClr, btForegrounClr);
             add100BoidBT.addActionListener(new ActionListener(){
             	
@@ -230,12 +247,13 @@ public class GUI {
     					}
     			}
             });
+            
+            addPanel.add(addBoidBT);
+            addPanel.add(add10BoidBT);
             addPanel.add(add100BoidBT);
             add(addPanel);
             
-            
-            Panel removePanel = new Panel();
-            removePanel.setLayout(new BoxLayout(removePanel, 1));
+            JPanel removePanel = newJPanel();
             
             /* Remove currently selected flock */
             JButton removeFlockBT = newButton("Remove Flock",btBackgrounClr, btForegrounClr);
@@ -249,7 +267,6 @@ public class GUI {
 					//flockSelectCB.addItem("Flock " + handler.getFlocks().size());			
 				}
             });
-            removePanel.add(removeFlockBT);
             
             /* Remove all of the flocks and boids, and reset to initial state */
             JButton clearBT = newButton("Clear",btBackgrounClr, btForegrounClr);
@@ -263,6 +280,7 @@ public class GUI {
 					flockSelectCB.addItem("Flock " + handler.getFlocks().size());			
 				}
             });
+            removePanel.add(removeFlockBT);
             removePanel.add(clearBT);
             add(removePanel);
             
@@ -292,16 +310,10 @@ public class GUI {
 				}
             });
             add(flockSelectCB);
+           
             
-            /* When enabled, keeps the current flocks setting for new flock*/
-            transferSettingCB = new JCheckBox("Save Settings");
-            transferSettingCB.setBackground(btBackgrounClr);
-            transferSettingCB.setForeground(btForegrounClr);
-            add(transferSettingCB);
-            
-            
-            Panel flockPanel = new Panel();
-            flockPanel.setLayout(new BoxLayout(flockPanel, 1));
+            /* Flocking Parameter panel */
+            JPanel flockingPanel = newJPanel();
             
             alignmentSlider = jSliderSetup(0, 0 , 100, 0, 10, 5, "Alignment", sliderBackgroundClr, sliderForegrounClr); 
             alignmentSlider.addChangeListener(new ChangeListener() {
@@ -310,7 +322,6 @@ public class GUI {
 					handler.updateAlignment(alignmentSlider.getValue());
 				}
             });
-            flockPanel.add(alignmentSlider);
             
             cohesionSlider = jSliderSetup(0, 0 , 100, 0, 10, 5, "Cohesion", sliderBackgroundClr, sliderForegrounClr);
             cohesionSlider.addChangeListener(new ChangeListener() {
@@ -319,7 +330,6 @@ public class GUI {
 					handler.updateCohesion(cohesionSlider.getValue());
 				}
             });
-            flockPanel.add(cohesionSlider);
             
             separationSlider = jSliderSetup(0, 0 , 100, 0, 10, 5, "Separation", sliderBackgroundClr, sliderForegrounClr);
             separationSlider.addChangeListener(new ChangeListener() {
@@ -328,11 +338,15 @@ public class GUI {
 					handler.updateSeparation(separationSlider.getValue());
 				}
             });
-            flockPanel.add(separationSlider);
-            add(flockPanel);
+           
+            flockingPanel.add(alignmentSlider);
+            flockingPanel.add(cohesionSlider);
+            flockingPanel.add(separationSlider);
+            add(flockingPanel); 
             
-            Panel atributesPanel = new Panel();
-            atributesPanel.setLayout(new BoxLayout(atributesPanel, 1));
+            /* Panel for boid attributes: colour, size, speed*/
+            JPanel atributesPanel = newJPanel();
+            
             colorSlider = jSliderSetup(0, 0 , 100, 40, 1, 0, "Color", sliderBackgroundClr, sliderForegrounClr);
             colorSlider.addChangeListener(new ChangeListener() {
 
@@ -342,7 +356,6 @@ public class GUI {
 		
 				}
             });
-            atributesPanel.add(colorSlider);
             
             sizeSlider = jSliderSetup(0, 0, 50, 10, 1, 1, "Size", sliderBackgroundClr,sliderForegrounClr);
             sizeSlider.addChangeListener(new ChangeListener() {
@@ -354,8 +367,7 @@ public class GUI {
 				}
             	
             });
-            atributesPanel.add(sizeSlider);
-            
+           
             /* Control the speed of the boid */
             speedSlider = jSliderSetup(0, 0, 20, 2, 1, 1, "Speed", sliderBackgroundClr,sliderForegrounClr);
             speedSlider.addChangeListener(new ChangeListener(){
@@ -367,6 +379,8 @@ public class GUI {
 				}
             	
             });
+            atributesPanel.add(colorSlider);
+            atributesPanel.add(sizeSlider);
             atributesPanel.add(speedSlider);
             add(atributesPanel);
             
@@ -426,8 +440,8 @@ public class GUI {
 	/* Slider setup */
 	private JSlider jSliderSetup(int alignment, int minVal, int maxVal, int startVal, int majTick, int minTick, String title, Color backColor, Color frontColor){
 		
+		
 		JSlider slider = new JSlider(alignment, minVal, maxVal, startVal) {
-
 			@Override
 	        public void updateUI() {
 	            setUI(new CustomSliderUI(this));
@@ -443,7 +457,7 @@ public class GUI {
 		slider.setPaintTicks(false);
 		slider.setBackground(backColor);
 		TitledBorder border  = new TitledBorder(title);
-		border.setTitleFont(new Font(null, 0, 10));
+		border.setTitleFont(font);
 		border.setTitleColor(frontColor);
 		slider.setBorder(border);
 		
@@ -453,13 +467,31 @@ public class GUI {
 	/*Button setup */
 	public JButton newButton(String title, Color background, Color foreground) {
 		JButton button = new JButton(title);
+		button.setFont(font);
 		button.setBackground(background);
 		button.setForeground(foreground);
 		button.setFocusPainted(false);
+		
+		//button.setAlignmentX(0.5f);
+		//button.setAlignmentY(0.5f);
+
+		button.setMaximumSize(new Dimension(100 , 15));
+		
 		return button;
 	}
 
-	
+	/* Set up a JPanel*/
+	private JPanel newJPanel() {
+		JPanel panel = new JPanel();
+		panel.setLayout(new BoxLayout(panel, 1));
+		panel.setBorder(new LineBorder(Color.white));
+		panel.setBackground(Color.blue);
+		//panel.setSize(100,  50);
+		panel.setPreferredSize(new Dimension(200, 90));
+	;
+		
+		return panel;
+	}
 	
 	/* Changes the appearance of the default slider: copied from StackOwerflow, user: "weisj" 
 	 * 
