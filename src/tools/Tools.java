@@ -50,5 +50,10 @@ public class Tools {
 	}
 
 
+	public static int wrapToZero(int i) {
+		return (i > 0) ? i: 0;
+	}
+
+
 	
 }

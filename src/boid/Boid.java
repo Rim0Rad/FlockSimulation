@@ -35,14 +35,11 @@ public class Boid {
 	
 	//Wall detection radius
 	protected int detectRadius = 100;
-	BufferedImage buffImg;
+	//BufferedImage buffImg;
 	
 	public Boid(int x, int y, double direction) {
 		this.pos = new Coordinates2D(x, y);
 		this.direction = direction;
-		
-		
-		
 		body = new Triangle(boidLenght, boidWidth, direction);
 		color = new HSBColor(0, 0 ,0);
 		rotate(0);	
@@ -62,11 +59,6 @@ public class Boid {
 		
 	}
 	
-	/* Models the behaviour of a boid.
-	 *  
-	 *   random movement of free boid
-	 *  
-	 *  */
 	public void tick() {
 		
 		double avoidWalsAngle = avoidWalls();
@@ -114,7 +106,7 @@ public class Boid {
 		}
 	}
 	
-	/*Avoid the edges of the canvas */
+	/* UNUSED: Avoid the edges of the canvas */
 	protected double avoidWalls(){
 		double angVel = 0.0;
 	

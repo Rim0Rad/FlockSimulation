@@ -7,6 +7,7 @@ import java.util.List;
 
 import boid.BoidF;
 import tools.HSBColor;
+import tools.Tools;
 
 public class Handler {
 	
@@ -127,7 +128,7 @@ public class Handler {
 
 	/* Remove all of the boids and flocks from simulation */
 	public void clear() {
-		System.out.println(flocks);
+		
 		synchronized(flocks) {
 			flocks.removeAll(flocks);
 			boids.removeAll(boids);
@@ -152,9 +153,25 @@ public class Handler {
 	}
 
 	public void removeFlock(int selectedIndex) {
-		flocks.remove(selectedIndex);
-		selectedFlock--;
 		
+		System.out.println("handler selected flock " + selectedIndex);
+		System.out.println("number of flocks " + flocks.size());
+		
+		
+		flocks.remove(selectedIndex);
+		
+		
+		/*
+		if( flocks.size() > 1 ) {
+			selectedFlock = Tools.wrapToZero(selectedFlock--);
+			flocks.remove(selectedIndex);
+		} else if( flocks.size() == 1  && selectedIndex == 1){
+			flocks.remove(selectedIndex);
+			flocks.add(boids);
+		}
+		*/
+		System.out.println(" post " + selectedIndex);
+		System.out.println("size " + flocks.size());
 	}
 
 	

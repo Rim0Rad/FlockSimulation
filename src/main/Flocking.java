@@ -2,47 +2,42 @@ package main;
 
 
 import java.awt.BasicStroke;
-import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.awt.Polygon;
-import java.awt.Stroke;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.awt.geom.AffineTransform;
-import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferStrategy;
-import java.awt.image.BufferedImage;
-import java.io.File;
 
+import gui.CustomCanvas;
 import gui.GUI;
 
 public class Flocking {
 	
 	//Window settings
 	private final String title = "Flocking Simulator";
+
+	//TODO: compatibility - make the initial screen a percentage of the screen size
 	private static int WINDOW_WIDTH = 1500;
 	private static int WINDOW_HEIGTH = 830;
 	
 	private static Window window;
 	private static GUI gui;
-	//private Canvas canvas;
+	private static CustomCanvas canvas;
 	private Handler handler;
 	
 	//Simulation
 	private static boolean running = true;
-	private int timeDelay = 20;
+	private int timeDelay = 20; 
 	
 	public Flocking(){
 		
 		window = new Window(WINDOW_WIDTH, WINDOW_HEIGTH, title);
-		//canvas = new Canvas();
 		handler = new Handler();
 		gui = new GUI(handler, window);
 		simulation();
 	}
 	
+	/* Runs the simulation loop*/
 	public void simulation() {
+		
 		while(running) {
 			
 			tick();
@@ -57,7 +52,7 @@ public class Flocking {
 	}
 	
 	private void render() {
-		Canvas canvas = gui.getCanvas();
+		this.canvas = gui.getCanvas();
 		BufferStrategy bs = canvas.getBufferStrategy();
 		if(bs == null) {
 			canvas.createBufferStrategy(2);
@@ -67,10 +62,10 @@ public class Flocking {
 		if(g == null) {
 			return;
 		}
-			
-		//Set background color
+		
+		//Draw transparent background for trail effect TODO: slider for adjustable background transparency to control the trailing of the boid
 		g.setColor(new Color(0, 0, 0, .1f));
-		g.fillRect(0, 0, getCanvasWidth(), getCanvasHeight());
+		g.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
 		
 		//Draw boids
 		handler.render(g);
@@ -78,10 +73,10 @@ public class Flocking {
 		//Draw wall detection zone lines
 		g.setStroke(new BasicStroke(3));
 		g.setColor(Color.yellow);
-		g.drawLine(0, 50, getCanvasWidth(), 50);
-		g.drawLine(50, 0, 50, getCanvasHeight());
-		g.drawLine(0, getCanvasHeight()-50, 2000, getCanvasHeight() - 50);
-		g.drawLine(getCanvasWidth() - 50, 0, getCanvasWidth() - 50, getCanvasHeight());
+		g.drawLine(0, 50, canvas.getWidth(), 50);
+		g.drawLine(50, 0, 50, canvas.getHeight());
+		g.drawLine(0,canvas.getHeight()-50, 2000, canvas.getHeight() - 50);
+		g.drawLine(canvas.getWidth() - 50, 0, canvas.getWidth() - 50, canvas.getHeight());
 		
 		
 		g.dispose();
@@ -108,6 +103,6 @@ public class Flocking {
 	//Getters and Setters
 		public static int getWindowWidth() {return WINDOW_WIDTH;}
 		public static int getWindowHeigth() {return WINDOW_HEIGTH;}
-		public static int getCanvasHeight() {return gui.getCanvasHeigth();}
-		public static int getCanvasWidth() {return gui.getCanvasWidth();}
+		public static int getCanvasHeight() {return canvas.getHeight();}
+		public static int getCanvasWidth() {return canvas.getWidth();}
 }

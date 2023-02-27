@@ -1,5 +1,6 @@
 package main;
 
+import java.awt.Dimension;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowStateListener;
 
@@ -10,7 +11,8 @@ public class Window extends JFrame {
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = -75504316500988620L;
+
 
 	public Window(int windowSizeX, int windowSizeY, String title) {	
 		setTitle(title);
@@ -28,4 +30,10 @@ public class Window extends JFrame {
 		setResizable(false);
 	}
 	
+
+	/* Return the size of the content pane */
+	public Dimension getContentSize() {
+		System.out.println(this.getContentPane().getSize());
+		return this.getContentPane().getSize();
+	}
 }
