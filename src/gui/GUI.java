@@ -95,7 +95,7 @@ public class GUI {
 		
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			synchronized(handler.getFlocks()){
+			//synchronized(handler.getFlocks()){
 				
 				if(!GUI.isFullScreen()) {
 					fullscreen = true;
@@ -130,7 +130,7 @@ public class GUI {
 
 				} 
 			}
-		}	
+		//}	
     };
 	
 	

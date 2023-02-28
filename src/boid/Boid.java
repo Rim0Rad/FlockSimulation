@@ -24,7 +24,7 @@ public class Boid {
 	protected Coordinates2D pos;
 	
 	//Movement
-	private int speed;
+	private int speed = 5;
 	protected double direction;
 	private double wonderAngVel;
 	

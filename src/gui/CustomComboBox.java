@@ -13,9 +13,8 @@ public class CustomComboBox<T> extends JComboBox<String>{
 
 	CustomComboBox(int FlockNumb){
 
-		
 		addItem( ("Flock " + FlockNumb));
         setEditable(false);
-		
 	}
+	
 }

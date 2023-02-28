@@ -16,22 +16,23 @@ public class CustomSlider extends JSlider{
 	
 	/* Slider setup */
 	CustomSlider(int alignment, int minVal, int maxVal, int startVal, int majTick, int minTick, String title, Color backColor, Color frontColor){
+		super(alignment, minVal, maxVal, startVal);
 		
 		setMajorTickSpacing(majTick);
 		setMinorTickSpacing(minTick);
-		this.setValue(startVal);
+		setBackground(backColor);
+		
 		setPaintLabels(true);
 		setPaintTicks(true);
 		setSnapToTicks(true);
 		setPaintLabels(false);
 		setPaintTicks(false);
 		
-		setBackground(backColor);
+		
 		TitledBorder border  = new TitledBorder(title);
 		border.setTitleFont(font);
 		border.setTitleColor(frontColor);
 		setBorder(border);
-		
 		
 	}
 	
