@@ -12,11 +12,6 @@ import javax.swing.event.ChangeListener;
 import boid.BoidF;
 import main.Handler;
 
-import tools.HSBColor;
-
-
-
-
 public class ControlPanel extends JPanel{
 
 	/**
@@ -24,7 +19,7 @@ public class ControlPanel extends JPanel{
 	 */
 	private static final long serialVersionUID = -1195023324794864670L;
 	
-	
+	/* Sliders and default slider values */
 	private CustomSlider alignmentSlider;
 	private int DEFAULT_ALIGNMENT = 0;
 	private CustomSlider cohesionSlider;
@@ -43,6 +38,7 @@ public class ControlPanel extends JPanel{
 	private int DEFAULT_SPEED = 5;
 	private int MAX_SPEED = 20;
 	private int MIN_SPEED = 0;
+	
 	private CustomButton fullScreenBT;
 	private CustomComboBox<String> flockSelectCB; 
 	private CustomCheckBox transferSettingCB;
@@ -75,7 +71,7 @@ public class ControlPanel extends JPanel{
 		this.setPreferredSize(prefSize);
 		this.setBackground(panelColour);
 		
-		CPanel flocksPanel = new CPanel();
+		CustomPanel flocksPanel = new CustomPanel();
 		
 		 /* Adds a new flock, updates combo box*/
 		CustomButton addFlockBT = new CustomButton("Add Flock", buttonBackgrounClr, btForegrounClr);
@@ -83,35 +79,15 @@ public class ControlPanel extends JPanel{
         
         /* When enabled, keeps the current flocks setting for new flock*/
         transferSettingCB = new CustomCheckBox("Save Settings");
-        
         //flocksPanel.add(Box.createRigidArea(new Dimension(50,10)));
         flocksPanel.add(addFlockBT);
         //flocksPanel.add(Box.createRigidArea(new Dimension(0,10)));
         flocksPanel.add(transferSettingCB);
         add(flocksPanel);
         
-		
-		CPanel addPanel = new CPanel();
-		
-		/* Button to ADD 1 BOID */
-		CustomButton addBoidBT = new CustomButton("Add Boid", buttonBackgrounClr, btForegrounClr);
-        addBoidBT.addActionListener(BUTTON_ADD_1_BOID_ACTION_LISTENER);
-        
-        /* Button to ADD 10 BOIDS */
-        CustomButton add10BoidBT = new CustomButton("Add 10", buttonBackgrounClr, btForegrounClr);
-        add10BoidBT.addActionListener(BUTTON_ADD_10_BOID_ACTION_LISTENER);
-        
-        /* Button to ADD 100 BOIDS */
-        CustomButton add100BoidBT = new CustomButton("Add 100", buttonBackgrounClr, btForegrounClr);
-        add100BoidBT.addActionListener(BUTTON_ADD_100_BOID_ACTION_LISTENER);
-        
-        addPanel.add(addBoidBT);
-        addPanel.add(add10BoidBT);
-        addPanel.add(add100BoidBT);
-        add(addPanel);
+        add(initAddBoidButtonsPanel());
 
-        
-        CPanel removePanel = new CPanel();
+        CustomPanel removePanel = new CustomPanel();
         /* Remove currently selected flock */
         CustomButton removeFlockBT = new CustomButton("Remove Flock", buttonBackgrounClr, btForegrounClr);
         removeFlockBT.addActionListener(BUTTON_REMOVE_FLOCK_ACTION_LISTENER);
@@ -124,26 +100,22 @@ public class ControlPanel extends JPanel{
         removePanel.add(clearBT);
         add(removePanel);
         
+	    
         /* Combo box for selecting flocks */
         flockSelectCB = new CustomComboBox<String>(handler.getSelectedFlock()+1);  
         flockSelectCB.addActionListener(COMBO_BOX_ITEM_LISTENER);
-        //flockSelectCB.addliste
-        
-        
         add(flockSelectCB);
   
         /* Flocking Parameter panel: alignment, cohesion, separation */
-        CPanel flockingPanel = initFlockingParameteSliders();
-        add(flockingPanel); 
+        add(initFlockingParameterSlidersPanel()); 
         
         /* Panel for boid attributes: colour, size, speed*/
-        CPanel atributesPanel =  initBoidParameteSliders();
-        add(atributesPanel);
+        add(initBoidParameterSlidersPanel());
+        
         
         /* Enables full screen mode:
-         * Creates new full sized undecorated frame, transfer contents from windowed frame
-         * and dispose of the old frame.*/
-        
+         * Creates new full sized undecorated frame,
+         * transfer contents from windowed frame and dispose of the old frame.*/
         fullScreenBT = new CustomButton("Fullscreen", buttonBackgrounClr,  btForegrounClr);
         //TODO: add action listener from GUI fullScreenBT.addActionListener() to enable fullscreen;
         
@@ -152,19 +124,22 @@ public class ControlPanel extends JPanel{
 
 	
 	/* Initialise boid parameter control slider panel */ 
-	private CPanel initBoidParameteSliders() {
-		CPanel panel = new CPanel();
+	private CustomPanel initBoidParameterSlidersPanel() {
+		CustomPanel panel = new CustomPanel();
 		
 		colorSlider = new CustomSlider(0, MIN_COLOR, MAX_COLOR, DEFAULT_COLOR, 1, 0, "Color", sliderBackgroundClr, sliderForegrounClr);
-        colorSlider.addChangeListener(SLIDER_COLOR_CHANGE_LISTENER);
+        colorSlider.addChangeListener(SLIDER_CHANGE_LISTENER);
+        colorSlider.putClientProperty("type", "color");
         
         sizeSlider = new CustomSlider(0, MIN_SIZE, MAX_SIZE, DEFAULT_SIZE, 1, 0, "Size", sliderBackgroundClr,sliderForegrounClr);
-        sizeSlider.addChangeListener(SLIDER_SIZE_CHANGE_LISTENER);
+        sizeSlider.addChangeListener(SLIDER_CHANGE_LISTENER);
+        sizeSlider.putClientProperty("type", "size");
         
         /* Control boid's speed */
         speedSlider = new CustomSlider(0, MIN_SPEED, MAX_SPEED, DEFAULT_SPEED, 1, 0, "Speed", sliderBackgroundClr,sliderForegrounClr);
-        speedSlider.addChangeListener(SLIDER_SPEED_CHANGE_LISTENER);
-       
+        speedSlider.addChangeListener(SLIDER_CHANGE_LISTENER);
+        speedSlider.putClientProperty("type", "speed");
+        
         panel.add(colorSlider);
         panel.add(sizeSlider);
         panel.add(speedSlider);
@@ -172,17 +147,20 @@ public class ControlPanel extends JPanel{
 	}
 	
 	/* Initialise flocking parameter control slider panel */
-	private CPanel initFlockingParameteSliders() {
-		CPanel panel = new CPanel();
+	private CustomPanel initFlockingParameterSlidersPanel() {
+		CustomPanel panel = new CustomPanel();
 		
 	 	alignmentSlider = new CustomSlider(0, 0 , 100, 0, 10, 5, "Alignment", sliderBackgroundClr, sliderForegrounClr); 
-        alignmentSlider.addChangeListener(SLIDER_ALIGNMENT_CHANGE_LISTENER);
+        alignmentSlider.addChangeListener(SLIDER_CHANGE_LISTENER);
+        alignmentSlider.putClientProperty("type", "alignment");
         
         cohesionSlider = new CustomSlider(0, 0 , 100, 0, 10, 5, "Cohesion", sliderBackgroundClr, sliderForegrounClr);
-        cohesionSlider.addChangeListener(SLIDER_COHESION_CHANGE_LISTENER);
+        cohesionSlider.addChangeListener(SLIDER_CHANGE_LISTENER);
+        cohesionSlider.putClientProperty("type", "cohesion");
         
         separationSlider = new CustomSlider(0, 0 , 100, 0, 10, 5, "Separation", sliderBackgroundClr, sliderForegrounClr);
-        separationSlider.addChangeListener(SLIDER_SEPARATION_CHANGE_LISTENER);
+        separationSlider.addChangeListener(SLIDER_CHANGE_LISTENER);
+        separationSlider.putClientProperty("type", "cohesion");
        
         panel.add(alignmentSlider);
         panel.add(cohesionSlider);
@@ -191,26 +169,50 @@ public class ControlPanel extends JPanel{
         return panel;
 	}
 	
-	
+	private CustomPanel initAddBoidButtonsPanel() {
+		CustomPanel addPanel = new CustomPanel();
+		
+		/* Button to ADD 1 BOID */
+		CustomButton addBoidBT = new CustomButton("Add Boid", buttonBackgrounClr, btForegrounClr);
+        addBoidBT.addActionListener(BUTTON_ADD_BOID_ACTION_LISTENER);
+        addBoidBT.putClientProperty("value", 1);
+        
+        /* Button to ADD 10 BOIDS */
+        CustomButton add10BoidBT = new CustomButton("Add 10", buttonBackgrounClr, btForegrounClr);
+        add10BoidBT.addActionListener(BUTTON_ADD_BOID_ACTION_LISTENER);
+        add10BoidBT.putClientProperty("value", 10);
+        
+        /* Button to ADD 100 BOIDS */
+        CustomButton add100BoidBT = new CustomButton("Add 100", buttonBackgrounClr, btForegrounClr);
+        add100BoidBT.addActionListener(BUTTON_ADD_BOID_ACTION_LISTENER);
+        add100BoidBT.putClientProperty("value", 100);
+        
+        addPanel.add(addBoidBT);
+        addPanel.add(add10BoidBT);
+        addPanel.add(add100BoidBT);
+        
+        return addPanel;
+        
+	}
 	
 	/* Set slider values to the parameters of the current flock */
 	private void setFlockSliders() {
-		//TODO clean up
-		System.out.println(" curently selected: " + flockSelectCB.getSelectedIndex() + " box contents: " + flockSelectCB.getItemCount() );
+		
 		alignmentSlider.setValue(handler.getAlignment(flockSelectCB.getSelectedIndex()));
 		cohesionSlider.setValue(handler.getCohesion());
 		separationSlider.setValue(handler.getSeparation());
 		colorSlider.setValue(handler.getColorValue());
 		sizeSlider.setValue(handler.getBoidSize());
 		speedSlider.setValue(handler.getBoidSize());
+		
 	}
+	
 	/* Reset sliders to default values */
 	private void resetFlockSliders() {
 		
 		alignmentSlider.setValue(DEFAULT_ALIGNMENT);
 		cohesionSlider.setValue(DEFAULT_COHESION);
 		separationSlider.setValue(DEFAULT_SEPARATION);
-		
 		colorSlider.setValue(DEFAULT_COLOR);
 		sizeSlider.setValue(DEFAULT_SIZE);
 		speedSlider.setValue(DEFAULT_SPEED);
@@ -246,63 +248,41 @@ public class ControlPanel extends JPanel{
 	 *   
 	 **************/
 	
-	/* SPEED - update */
-	ChangeListener SLIDER_SPEED_CHANGE_LISTENER = new ChangeListener(){
+	/* Slider ChangeListener that, depending on the sources "type" property,
+	 * adjust flocking algorithm parameters or the appearance of the boids.  
+	 */
+	
+	ChangeListener SLIDER_CHANGE_LISTENER = new ChangeListener(){
 
 		@Override
 		public void stateChanged(ChangeEvent e) {
-			handler.updateSpeed(speedSlider.getValue());
+			System.out.println((String) ( (CustomSlider) e.getSource()).getClientProperty("type") );
+			switch( (String) ( (CustomSlider) e.getSource()).getClientProperty("type") ){
+			case "speed":
+				handler.updateSpeed(speedSlider.getValue());
+				break;
+			case "size":
+				handler.updateSize(sizeSlider.getValue());
+				break;
+			case "color":
+				handler.updateColor(colorSlider.getValue());
+				break;
+			case "alignment":
+				handler.updateAlignment(alignmentSlider.getValue());
+				break;
+			case "cohesion":
+				handler.updateCohesion(cohesionSlider.getValue());
+				break;
+			case "separation":
+				handler.updateSeparation(separationSlider.getValue());
+				break;
+			}
+
+			
 			
 		}
-    	
-    };
-
-    /* SIZE - update */
-    ChangeListener SLIDER_SIZE_CHANGE_LISTENER = new ChangeListener() {
-
-		@Override
-		public void stateChanged(ChangeEvent e) {
-			
-			handler.updateSize(sizeSlider.getValue());
-		}
-    	
-    };
-   
-    /* COLOR - update */
-    ChangeListener SLIDER_COLOR_CHANGE_LISTENER = new ChangeListener() {
-
-		@Override
-		public void stateChanged(ChangeEvent e) {
-			handler.updateColor(new HSBColor((float) colorSlider.getValue()/100, 1 , 1));
-
-		}
     };
     
-    /* ALIGNMENT - update */
-    ChangeListener SLIDER_ALIGNMENT_CHANGE_LISTENER = new ChangeListener() {
-		@Override
-		public void stateChanged(ChangeEvent e) {
-			handler.updateAlignment(alignmentSlider.getValue());
-		}
-    };
-   
-    
-    /* COHESIONS - update */
-    ChangeListener SLIDER_COHESION_CHANGE_LISTENER = new ChangeListener() {
-		
-    	@Override
-		public void stateChanged(ChangeEvent e) {
-			handler.updateCohesion(cohesionSlider.getValue());
-		}
-    };
-    
-    /* SEPARATION SLIDER- update separations strength*/ 
-    ChangeListener SLIDER_SEPARATION_CHANGE_LISTENER = new ChangeListener() {
-		@Override
-		public void stateChanged(ChangeEvent e) {
-			handler.updateSeparation(separationSlider.getValue());
-		}
-    };
     
     /* FLOCK SELECT - select the current flock to control*/
     ActionListener COMBO_BOX_ITEM_LISTENER = new ActionListener() {
@@ -323,6 +303,7 @@ public class ControlPanel extends JPanel{
     };
     
     /* CLEAR BOIDS/FLOCKS - removes all the boid and flocks from the simulation and resets "Flock select" combo box to initial state*/
+   
     ActionListener BUTTON_CLEAR_ACTION_LISTENER = new ActionListener() {
     	
 		@Override
@@ -349,10 +330,7 @@ public class ControlPanel extends JPanel{
      * */
     
     
-    /* REMOVE FLOCK - removes currently selected flock
-     * When only one flock is present use clear to reset */
-    
-   
+    /* REMOVE FLOCK - removes currently selected flock */
     ActionListener BUTTON_REMOVE_FLOCK_ACTION_LISTENER = new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
@@ -361,43 +339,25 @@ public class ControlPanel extends JPanel{
 				handler.clear();
 			}else if(flockSelectCB.getItemCount() > 1){
 				
-				
 				int index = flockSelectCB.getSelectedIndex();
-				handler.removeFlock(index);
 				flockSelectCB.removeItemAt(index);
-				
 				handler.setSelectedFlock(flockSelectCB.getSelectedIndex());
+				handler.removeFlock(index);
 				setFlockSliders();
 				
 			}
 		}
     };
     
-    /* Action listeners for the buttons to add 1, 10 and 100 boids to selected flock*/
-    ActionListener BUTTON_ADD_1_BOID_ACTION_LISTENER = new ActionListener(){    	
+    /* Action listeners for the buttons to add boids to selected flock. Number of boids is stored in the button properties under "value" key */
+    ActionListener BUTTON_ADD_BOID_ACTION_LISTENER = new ActionListener(){    	
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			addBoids(1);
+			addBoids((int)((CustomButton)e.getSource()).getClientProperty("value"));
 		}
     };
-    ActionListener BUTTON_ADD_10_BOID_ACTION_LISTENER = new ActionListener(){
-    	
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			addBoids(10);
-		}
-    };
-    ActionListener BUTTON_ADD_100_BOID_ACTION_LISTENER = new ActionListener(){
-    	
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			addBoids(100);
-			
-		}
-    };
-    
-    /* Add a new flock to simulation, update combo box with new entry*/
 
+    /* Add a new flock to simulation, update combo box with new entry*/
     ActionListener BUTTON_ADD_FLOCK_ACTION_LISTENER = new ActionListener(){
     	
 		@Override

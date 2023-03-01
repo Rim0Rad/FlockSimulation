@@ -1,7 +1,6 @@
 package boid;
 
 import java.awt.Graphics;
-import java.awt.image.BufferedImage;
 import java.util.Random;
 
 import main.Flocking;
@@ -20,28 +19,30 @@ public class Boid {
 	private int boidWidth = size / 3;
 	private Triangle body;
 	
-	//Position
-	protected Coordinates2D pos;
+	/* Position of the boid*/
+	protected Coordinates2D pos = new Coordinates2D(0, 0);
 	
-	//Movement
+	/* Speed and direction */
 	private int speed = 5;
-	protected double direction;
-	private double wonderAngVel;
+	protected double direction = 0;
 	
-	//Boid AI
+	/* Boid random turning variables and settings*/
 	private int wonderTimer = 0;
+	private double wonderAngVel = 0;
 	private int WONDER_TIMER_MAX = 50;
 	private int WONDER_TIMER_MIN = 20;
 	
-	//Wall detection radius
+	/* Wall detection radius.  not currently used - */
 	protected int detectRadius = 100;
-	//BufferedImage buffImg;
 	
 	public Boid(int x, int y, double direction) {
-		this.pos = new Coordinates2D(x, y);
+		
+		pos.set(x, y);
 		this.direction = direction;
+		
 		body = new Triangle(boidLenght, boidWidth, direction);
 		color = new HSBColor(0, 0 ,0);
+		
 		rotate(0);	
 	}
 	
@@ -52,16 +53,16 @@ public class Boid {
 		
 		body = new Triangle(boidLenght, boidWidth, direction);
 		direction =  Math.random() * (180 + 180) - 180;
-		color =  new HSBColor(0.2f, 1 ,1);
 		
-		wonderAngVel = 0;
-		speed = 2;
+		color =  new HSBColor(0.2f, 1 ,1);
 		
 	}
 	
+	/* NOTE: tick class is is overwritten in the BoidF */
 	public void tick() {
 		
 		double avoidWalsAngle = avoidWalls();
+		
 		if(avoidWalsAngle != 0) {
 			rotate(avoidWalsAngle);
 		}else{
@@ -71,6 +72,7 @@ public class Boid {
 		move();
 		
 	}
+	
 	
 	public void render(Graphics g) {
 		g.setColor(color.getColor());

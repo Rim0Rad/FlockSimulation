@@ -38,6 +38,8 @@ public class BoidF extends Boid{
 		
 	}
 	
+	//TODO: this is bad a dependancy, Should probably create flock class for this method and flock parameters
+	
 	/* Flocking algorithm:
 	 * calculates each component of flocking, combines the result and returns the boid direction */
 	public double flock(List<BoidF> boids) {
@@ -127,7 +129,8 @@ public class BoidF extends Boid{
 		}
 		return sepAngle;
 	}
-
+	
+	/*   */
 	private double calculateCohesionAngle(ArrayList<Boid> boids) {
 		double cohesAngle = 0.0;
 		Coordinates2D avgPos = new Coordinates2D(0, 0); 
@@ -148,13 +151,16 @@ public class BoidF extends Boid{
 		return cohesAngle;
 	}
 	
-	
+	/* */
 	public void setColor(HSBColor hsbColor) {this.color = hsbColor;}
+	
 	public void setColor(int value) {
 		this.color.setHue(value);
 	}
+	
 	public int getColor() {return this.color.getHue();}
 	
+	/*TODO: these could be moved to flock class */ 
 	public void updateParameters(double value, double value2, double value3) {
 		setAlignmentStr(value*0.01);
 		setCohesionStr(value2*0.01);

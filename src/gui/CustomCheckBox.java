@@ -19,6 +19,7 @@ public class CustomCheckBox extends JCheckBox{
 	
 	//TODO: Customise the check box
 	CustomCheckBox(String title){
+		
 		super(title);
 		
 		setBackground(CHECK_BOX_BG_COLOR);

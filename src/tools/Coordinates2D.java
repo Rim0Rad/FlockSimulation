@@ -3,6 +3,7 @@ package tools;
 public class Coordinates2D {
 	
 	private double x, y;
+	
 	public Coordinates2D(int x, int y) {
 		this.x = x;
 		this.y = y;
@@ -58,6 +59,11 @@ public class Coordinates2D {
 		this.x = x;
 	}
 	public void setY(double y) {
+		this.y = y;
+	}
+	
+	public void set(double x, double y) {
+		this.x = x;
 		this.y = y;
 	}
 

@@ -45,7 +45,9 @@ public class CustomCanvas extends Canvas{
 	 * Canvas Listeners *
 	 *******************/
 	
-	/* KEYLISTENER - listens  for ESC key to exit full screen mode */
+	
+	/* TODO: KEYLISTENER - listens  for ESC key to exit full screen mode 
+	 * probably best to move the listener declaration out to GUI */
 	
 	KeyListener CANVAS_KEY_LISTENER = new KeyListener() {
 		
@@ -55,7 +57,7 @@ public class CustomCanvas extends Canvas{
 		@Override
 		public void keyPressed(KeyEvent e) {
 			if(e.getKeyCode() == KeyEvent.VK_ESCAPE && fullscreen == true) {
-				//fullscreen = botPanel.togleFulscreen(fullscreen);
+				//fullscreen = GUI.togleFulscreen(fullscreen);
 			}
 		}
 		

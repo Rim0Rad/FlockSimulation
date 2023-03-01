@@ -11,27 +11,31 @@ import gui.GUI;
 
 public class Flocking {
 	
-	//Window settings
-	private final String title = "Flocking Simulator";
+	
 
 	//TODO: compatibility - make the initial screen a percentage of the screen size
 	private static int WINDOW_WIDTH = 1500;
 	private static int WINDOW_HEIGTH = 830;
 	
+	/*Graphical elements */
 	private static Window window;
-	private static GUI gui;
+	private final String TITLE = "Flocking Simulator";
+	
+	private static GUI GUI;
 	private static CustomCanvas canvas;
+	
 	private Handler handler;
 	
-	//Simulation
+	/* Simulation parameters*/
 	private static boolean running = true;
-	private int timeDelay = 20; 
+	private int timeDelay = 20;  //TODO: will be looking into a better simulation loop as this static delay doesn't account for increasing number of boids. Starts to lag pretty soon.
+	
 	
 	public Flocking(){
 		
-		window = new Window(WINDOW_WIDTH, WINDOW_HEIGTH, title);
+		window = new Window(WINDOW_WIDTH, WINDOW_HEIGTH, TITLE);
 		handler = new Handler();
-		gui = new GUI(handler, window);
+		GUI = new GUI(handler, window);
 		simulation();
 	}
 	
@@ -51,14 +55,19 @@ public class Flocking {
 		}
 	}
 	
+	/* Draw objects onto canvas */
 	private void render() {
-		this.canvas = gui.getCanvas();
+		
+		this.canvas = GUI.getCanvas();
+		
 		BufferStrategy bs = canvas.getBufferStrategy();
+		
 		if(bs == null) {
 			canvas.createBufferStrategy(2);
 			return;
 		}
 		Graphics2D g = (Graphics2D) bs.getDrawGraphics();
+		
 		if(g == null) {
 			return;
 		}
@@ -97,10 +106,19 @@ public class Flocking {
 		new Flocking();
 	}
 	
-	public static void stop() {running = false;}
+	/*Stop the simulation from running */
+	public static void stop() {
+		running = false;
+		
+	}
 	
 	
-	//Getters and Setters
+	/************************
+	 * 
+	 * Getters and Setters
+	 * 
+	 ************************/
+	
 		public static int getWindowWidth() {return WINDOW_WIDTH;}
 		public static int getWindowHeigth() {return WINDOW_HEIGTH;}
 		public static int getCanvasHeight() {return canvas.getHeight();}

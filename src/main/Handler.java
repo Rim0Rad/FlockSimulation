@@ -7,7 +7,6 @@ import java.util.List;
 
 import boid.BoidF;
 import tools.HSBColor;
-import tools.Tools;
 
 public class Handler {
 	
@@ -83,9 +82,10 @@ public class Handler {
 	}
 
 	/* Updates the colour hue of all boids in the selected flock */
-	public void updateColor(HSBColor hsbColor) {
+	public void updateColor(int hueValue) {
+		HSBColor color = new HSBColor((float) hueValue/100, 1 , 1);
 		for(BoidF boid: flocks.get(selectedFlock)) {
-			boid.setColor(hsbColor);
+			boid.setColor(color);
 		}
 	}
 	
