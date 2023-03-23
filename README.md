@@ -1,2 +1,4 @@
 # FlockSimulation
  
+ Simulating flocking behaviour
+ 
